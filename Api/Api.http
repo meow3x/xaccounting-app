@@ -1,0 +1,14 @@
+@Api_HostAddress = http://localhost:5124
+
+GET {{Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
+
+POST {{Api_HostAddress}}/api/chartofaccounts
+Content-Type: application/json
+{
+        
+}
+
+###
