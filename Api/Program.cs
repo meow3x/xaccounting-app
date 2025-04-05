@@ -20,8 +20,9 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddDbContextPool<ApplicationDbContext>(opt =>
 {
-    opt
-        .UseNpgsql(builder.Configuration.GetConnectionString("ApplicationContext"));
+    opt.UseNpgsql(builder.Configuration.GetConnectionString("ApplicationContext"))
+        .UseLowerCaseNamingConvention();
+       
 });
 builder.Services.AddMediatR(config => config.RegisterServicesFromAssembly(typeof(Program).Assembly));
 
@@ -31,7 +32,7 @@ app.UseCors();
 // Configure the HTTP request pipeline.
 if (true/*app.Environment.IsDevelopment()*/)
 {
-    app.MapScalarApiReference();
+    app.MapScalarApiReference("/");
     app.MapOpenApi();
 }
 

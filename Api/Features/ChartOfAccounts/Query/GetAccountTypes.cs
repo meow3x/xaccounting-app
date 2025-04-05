@@ -2,7 +2,7 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace Api.Features.ChartOfAccounts;
+namespace Api.Features.ChartOfAccounts.Query;
 
 public static class GetAccountTypes
 {

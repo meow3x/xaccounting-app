@@ -12,3 +12,192 @@ Content-Type: application/json
 }
 
 ###
+
+PUT {{Api_HostAddress}}/api/chartofaccounts/{id}
+Content-Type: application/json
+
+{
+  //UpdateAccountCommand
+}
+
+###
+
+POST {{Api_HostAddress}}/api/items
+Content-Type: application/json
+{
+  "code": "12345.1",
+  "name": "Item #123abc",
+  "unitOfMeasurementId": 2,
+  "unitPrice": 0,
+  "unitCost": 0,
+  "categoryId": 3,
+  "wholeSale": 0,
+  "reorder": 0
+}
+
+###
+
+// Get all items
+GET {{Api_HostAddress}}/api/items
+
+###
+
+
+@id=3
+PUT {{Api_HostAddress}}/api/items/{{id}}
+Content-Type: application/json
+{
+  "code": "123452",
+  "name": "Item #1",
+  "unitOfMeasurementId": 1,
+  "unitPrice": 111,
+  "unitCost": 1,
+  "categoryId": 1
+}
+
+###
+
+@id=3
+GET {{Api_HostAddress}}/api/items/{{id}}
+
+###
+
+// New
+POST {{Api_HostAddress}}/api/suppliers
+Content-Type: application/json
+{
+  "supplierId": "111x01",
+  "name": "XXACTION LABS IT SERVICES PHILS CORP",
+  "address": {
+    "street": "BURGOS",
+    "city": "Rodriguez",
+    "province": "RIZAL",
+    "landlineNumber": "(02)800-1233",
+    "mobileNumber": "123123"
+  },
+  "tin": "123abc",
+  "discount": 30.0,
+  "creditLimit": 100000.0,
+  "paymentTermId": 2
+}
+
+###
+
+@id = 1
+PUT {{Api_HostAddress}}/api/suppliers/{{id}}
+Content-Type: application/json
+{
+  "supplierId": "111",
+  "name": "YYACTION LABS IT SERVICES PHILS CORP",
+  "address": {
+    "street": "BURGOS",
+    "city": "Rodriguez",
+    "province": "RIZAL",
+    "landlineNumber": "(02)800-1233",
+    "mobileNumber": "1111"
+  },
+  "tin": "123abc123xx",
+  "discount": null,
+  "creditLimit": 100000,
+  "paymentTermId": 1
+}
+
+###
+
+GET {{Api_HostAddress}}/api/suppliers
+
+###
+
+GET {{Api_HostAddress}}/api/customers
+
+###
+
+POST {{Api_HostAddress}}/api/customers
+Content-Type: application/json
+{
+  "customerId": "12345",
+  "name": "Customer 1",
+  "address": {
+    "street": null,
+    "city": null,
+    "province": null,
+    "landlineNumber": null,
+    "mobileNumber": null
+  },
+  "tin": null,
+  "discount": null,
+  "creditLimit": null,
+  "paymentTermId": null
+}
+###
+
+@id=1
+PUT {{Api_HostAddress}}/api/customers/{{id}}
+Content-Type: application/json
+{
+  "customerId": "12345",
+  "name": "Customer 1 update 1",
+  "address": {
+    "street": "X Street",
+    "city": null,
+    "province": null,
+    "landlineNumber": "(02)888-1234",
+    "mobileNumber": null
+  },
+  "tin": null,
+  "discount": 0.50,
+  "creditLimit": null,
+  "paymentTermId": 1
+}
+
+###
+
+POST {{Api_HostAddress}}/api/employees
+Content-Type: application/json
+{
+  "employeeId": "111",
+  "firstName": "JP",
+  "lastName": "P",
+  "middleName": null,
+  "address": {
+    "street": null,
+    "city": null,
+    "province": null,
+    "landlineNumber": null,
+    "mobileNumber": null
+  },
+  "tin": null,
+  "pagIbigId": null,
+  "philhealthId": null,
+  "rate": null,
+  "salaryUnit": 3
+}
+
+###
+
+GET {{Api_HostAddress}}/api/employees
+
+###
+
+@id=2
+PUT {{Api_HostAddress}}/api/employees/{{id}}
+Content-Type: application/json
+{
+  "employeeId": "111",
+  "firstName": "JR",
+  "lastName": "Pimetnel",
+  "middleName": null,
+  "address": {
+    "street": null,
+    "city": null,
+    "province": null,
+    "landlineNumber": null,
+    "mobileNumber": null
+  },
+  "tin": null,
+  "pagIbigId": null,
+  "philhealthId": null,
+  "rate": null,
+  "salaryUnit": 0
+}
+###

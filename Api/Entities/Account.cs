@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
@@ -12,7 +13,7 @@ namespace Api.Entities;
 public class Account : BaseEntity
 {
     // Fixme: Primary key should be [OrganizationId, Id]
-    [Column(TypeName = "varchar(200)")]
+    [MaxLength(25)]
     public required string AccountId { get; set; }
     public required string Name { get; set; }
     public required AccountType AccountType { get; set; }

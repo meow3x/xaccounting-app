@@ -2,6 +2,7 @@
 using Api.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -10,9 +11,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250404120357_InitialMigration")]
+    partial class InitialMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -208,9 +211,9 @@ namespace Api.Migrations
                         .HasColumnType("text")
                         .HasColumnName("name");
 
-                    b.Property<int?>("PaymentTermId")
+                    b.Property<int?>("TermId")
                         .HasColumnType("integer")
-                        .HasColumnName("paymenttermid");
+                        .HasColumnName("termid");
 
                     b.Property<string>("Tin")
                         .HasColumnType("text")
@@ -223,69 +226,10 @@ namespace Api.Migrations
                         .IsUnique()
                         .HasDatabaseName("ix_customers_customerid");
 
-                    b.HasIndex("PaymentTermId")
-                        .HasDatabaseName("ix_customers_paymenttermid");
+                    b.HasIndex("TermId")
+                        .HasDatabaseName("ix_customers_termid");
 
                     b.ToTable("customers", (string)null);
-                });
-
-            modelBuilder.Entity("Api.Entities.Employee", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("EmployeeId")
-                        .IsRequired()
-                        .HasMaxLength(25)
-                        .HasColumnType("character varying(25)")
-                        .HasColumnName("employeeid");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("firstname");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("lastname");
-
-                    b.Property<string>("MiddleName")
-                        .HasColumnType("text")
-                        .HasColumnName("middlename");
-
-                    b.Property<string>("PagIbigId")
-                        .HasColumnType("text")
-                        .HasColumnName("pagibigid");
-
-                    b.Property<string>("PhilhealthId")
-                        .HasColumnType("text")
-                        .HasColumnName("philhealthid");
-
-                    b.Property<decimal?>("Rate")
-                        .HasColumnType("numeric")
-                        .HasColumnName("rate");
-
-                    b.Property<int>("SalaryUnit")
-                        .HasColumnType("integer")
-                        .HasColumnName("salaryunit");
-
-                    b.Property<string>("Tin")
-                        .HasColumnType("text")
-                        .HasColumnName("tin");
-
-                    b.HasKey("Id")
-                        .HasName("pk_employees");
-
-                    b.HasIndex("EmployeeId")
-                        .IsUnique()
-                        .HasDatabaseName("ix_employees_employeeid");
-
-                    b.ToTable("employees", (string)null);
                 });
 
             modelBuilder.Entity("Api.Entities.Item", b =>
@@ -511,15 +455,15 @@ namespace Api.Migrations
                         .HasColumnType("text")
                         .HasColumnName("name");
 
-                    b.Property<int?>("PaymentTermId")
-                        .HasColumnType("integer")
-                        .HasColumnName("paymenttermid");
-
                     b.Property<string>("SupplierId")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)")
                         .HasColumnName("supplierid");
+
+                    b.Property<int?>("TermId")
+                        .HasColumnType("integer")
+                        .HasColumnName("termid");
 
                     b.Property<string>("Tin")
                         .HasColumnType("text")
@@ -528,12 +472,12 @@ namespace Api.Migrations
                     b.HasKey("Id")
                         .HasName("pk_suppliers");
 
-                    b.HasIndex("PaymentTermId")
-                        .HasDatabaseName("ix_suppliers_paymenttermid");
-
                     b.HasIndex("SupplierId")
                         .IsUnique()
                         .HasDatabaseName("ix_suppliers_supplierid");
+
+                    b.HasIndex("TermId")
+                        .HasDatabaseName("ix_suppliers_termid");
 
                     b.ToTable("suppliers", (string)null);
                 });
@@ -695,10 +639,10 @@ namespace Api.Migrations
 
             modelBuilder.Entity("Api.Entities.Customer", b =>
                 {
-                    b.HasOne("Api.Entities.PaymentTerm", "PaymentTerm")
+                    b.HasOne("Api.Entities.PaymentTerm", "Term")
                         .WithMany()
-                        .HasForeignKey("PaymentTermId")
-                        .HasConstraintName("fk_customers_paymentterms_paymenttermid");
+                        .HasForeignKey("TermId")
+                        .HasConstraintName("fk_customers_paymentterms_termid");
 
                     b.OwnsOne("Api.Entities.Address", "Address", b1 =>
                         {
@@ -738,48 +682,7 @@ namespace Api.Migrations
                     b.Navigation("Address")
                         .IsRequired();
 
-                    b.Navigation("PaymentTerm");
-                });
-
-            modelBuilder.Entity("Api.Entities.Employee", b =>
-                {
-                    b.OwnsOne("Api.Entities.Address", "Address", b1 =>
-                        {
-                            b1.Property<int>("EmployeeId")
-                                .HasColumnType("integer")
-                                .HasColumnName("id");
-
-                            b1.Property<string>("City")
-                                .HasColumnType("text")
-                                .HasColumnName("address_city");
-
-                            b1.Property<string>("LandlineNumber")
-                                .HasColumnType("text")
-                                .HasColumnName("address_landlinenumber");
-
-                            b1.Property<string>("MobileNumber")
-                                .HasColumnType("text")
-                                .HasColumnName("address_mobilenumber");
-
-                            b1.Property<string>("Province")
-                                .HasColumnType("text")
-                                .HasColumnName("address_province");
-
-                            b1.Property<string>("Street")
-                                .HasColumnType("text")
-                                .HasColumnName("address_street");
-
-                            b1.HasKey("EmployeeId");
-
-                            b1.ToTable("employees");
-
-                            b1.WithOwner()
-                                .HasForeignKey("EmployeeId")
-                                .HasConstraintName("fk_employees_employees_id");
-                        });
-
-                    b.Navigation("Address")
-                        .IsRequired();
+                    b.Navigation("Term");
                 });
 
             modelBuilder.Entity("Api.Entities.Item", b =>
@@ -805,10 +708,10 @@ namespace Api.Migrations
 
             modelBuilder.Entity("Api.Entities.Supplier", b =>
                 {
-                    b.HasOne("Api.Entities.PaymentTerm", "PaymentTerm")
+                    b.HasOne("Api.Entities.PaymentTerm", "Term")
                         .WithMany()
-                        .HasForeignKey("PaymentTermId")
-                        .HasConstraintName("fk_suppliers_paymentterms_paymenttermid");
+                        .HasForeignKey("TermId")
+                        .HasConstraintName("fk_suppliers_paymentterms_termid");
 
                     b.OwnsOne("Api.Entities.Address", "Address", b1 =>
                         {
@@ -848,7 +751,7 @@ namespace Api.Migrations
                     b.Navigation("Address")
                         .IsRequired();
 
-                    b.Navigation("PaymentTerm");
+                    b.Navigation("Term");
                 });
 #pragma warning restore 612, 618
         }
