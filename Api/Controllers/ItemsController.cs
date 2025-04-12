@@ -1,9 +1,11 @@
-﻿using Api.Entities;
+﻿using Api.Database;
+using Api.Entities;
 using Api.Features.ItemMaintenance.Command;
 using Api.Features.ItemMaintenance.Query;
 using Ardalis.Result.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Api.Controllers;
 
@@ -12,10 +14,12 @@ namespace Api.Controllers;
 public class ItemsController : ControllerBase
 {
     private readonly IMediator _mediator;
+    private readonly ApplicationDbContext _dbContext;
 
-    public ItemsController(IMediator mediator)
+    public ItemsController(IMediator mediator, ApplicationDbContext dbContext)
     {
         _mediator = mediator;
+        _dbContext = dbContext;
     }
 
     // GET: api/<ItemController>
@@ -30,6 +34,18 @@ public class ItemsController : ControllerBase
     public async Task<ActionResult<Item>> Get(int id)
     {
         return (await _mediator.Send(new GetItemByIdQuery(id))).ToActionResult(this);
+    }
+
+    [HttpGet("UnitOfMeasurements")]
+    public async Task<IEnumerable<UnitOfMeasurement>> GetUnitOfMeasurements()
+    {
+        return await _dbContext.UnitOfMeasurements.AsNoTracking().ToListAsync();
+    }
+
+    [HttpGet("Categories")]
+    public async Task<IEnumerable<ItemCategory>> GetItemCategories()
+    {
+        return await _dbContext.ItemCategories.AsNoTracking().ToListAsync();
     }
 
     // POST api/<ItemController>

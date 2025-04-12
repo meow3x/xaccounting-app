@@ -1,9 +1,11 @@
-﻿using Api.Entities;
+﻿using Api.Database;
+using Api.Entities;
 using Api.Features.SupplierMaintenance.Command;
 using Api.Features.SupplierMaintenance.Query;
 using Ardalis.Result.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -14,10 +16,12 @@ namespace Api.Controllers;
 public class SuppliersController : ControllerBase
 {
     private readonly IMediator _mediator;
+    private readonly ApplicationDbContext _dbContext;
 
-    public SuppliersController(IMediator mediator)
+    public SuppliersController(IMediator mediator, ApplicationDbContext dbContext)
     {
         _mediator = mediator;
+        _dbContext = dbContext;
     }
 
     // GET: api/<SuppliersController>
@@ -29,9 +33,19 @@ public class SuppliersController : ControllerBase
 
     // GET api/<SuppliersController>/5
     [HttpGet("{id}")]
-    public string Get(int id)
+    public async Task<ActionResult<Supplier>> Get(int id)
     {
-        return "value";
+        var supplier = await _dbContext.Suppliers
+            .Include(e => e.PaymentTerm)
+            .AsNoTracking()
+            .SingleOrDefaultAsync(e => e.Id == id);
+
+        if (supplier is null)
+        {
+            return NotFound();
+        }
+
+        return Ok(supplier);
     }
 
     // POST api/<SuppliersController>

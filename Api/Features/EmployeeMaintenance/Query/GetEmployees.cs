@@ -27,6 +27,7 @@ internal sealed class GetAllEmployeesQueryHandler : IRequestHandler<GetAllEmploy
 
         var data = await _dbContext.Employees
             .AsNoTracking()
+            .OrderBy(e => e.Id)
             .ToListAsync(cancellationToken);
 
         return Result<EmployeeList>.Success(data);

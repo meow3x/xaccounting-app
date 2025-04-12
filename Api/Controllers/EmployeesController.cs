@@ -1,10 +1,12 @@
-﻿using Api.Entities;
+﻿using Api.Database;
+using Api.Entities;
 using Api.Features.EmployeeMaintenance.Command;
 using Api.Features.EmployeeMaintenance.Query;
 using Ardalis.Result;
 using Ardalis.Result.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -15,10 +17,12 @@ namespace Api.Controllers;
 public class EmployeesController : ControllerBase
 {
     public readonly IMediator _mediator;
+    public readonly ApplicationDbContext _dbContext;
 
-    public EmployeesController(IMediator mediator)
+    public EmployeesController(IMediator mediator, ApplicationDbContext dbContext)
     {
         _mediator = mediator;
+        _dbContext = dbContext;
     }
 
     // GET: api/<EmployeesController>
@@ -30,9 +34,24 @@ public class EmployeesController : ControllerBase
 
     // GET api/<EmployeesController>/5
     [HttpGet("{id}")]
-    public string Get(int id)
+    public async Task<ActionResult<Employee>> Get(int id)
     {
-        return "value";
+        var employee = await _dbContext.Employees
+            .AsNoTracking()
+            .SingleOrDefaultAsync(e => e.Id == id);
+
+        if (employee is null)
+        {
+            return NotFound();
+        }
+
+        return Ok(employee);
+    }
+
+    [HttpGet("SalaryUnits")]
+    public IEnumerable<string> GetSalaryUnits()
+    {
+        return Enum.GetValues<SalaryUnit>().Select(e => e.ToString()).ToList();
     }
 
     // POST api/<EmployeesController>

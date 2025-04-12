@@ -10,8 +10,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
 
-[Route("api/[controller]")]
 [ApiController]
+[Route("api/[controller]")]
 public class ChartOfAccountsController : ControllerBase
 {
     public readonly IMediator _mediator;
@@ -36,7 +36,7 @@ public class ChartOfAccountsController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    [ProducesResponseType<AccountView>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<AccountView>> Get(int id)
     {

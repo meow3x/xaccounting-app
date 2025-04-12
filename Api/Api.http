@@ -25,12 +25,12 @@ Content-Type: application/json
 POST {{Api_HostAddress}}/api/items
 Content-Type: application/json
 {
-  "code": "12345.1",
-  "name": "Item #123abc",
-  "unitOfMeasurementId": 2,
+  "code": "0023402",
+  "name": "Item #3",
+  "unitOfMeasurementId": 6,
   "unitPrice": 0,
   "unitCost": 0,
-  "categoryId": 3,
+  "categoryId": 1,
   "wholeSale": 0,
   "reorder": 0
 }

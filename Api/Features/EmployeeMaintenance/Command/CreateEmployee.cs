@@ -33,7 +33,7 @@ public class CreateEmployeeCommandValidator : AbstractValidator<CreateEmployeeCo
         //RuleFor(e => e.MiddleName);
         RuleFor(e => e.Address).SetValidator(new AddressDtoValidator());
         RuleFor(e => e.Tin).MinimumLength(3).When(e => e.Tin != null); // TODO: Regex
-        RuleFor(e => e.PagIbigId).MinimumLength(3).When(e => e.PagIbigId != null);
+        RuleFor(e => e.PagIbigId).MinimumLength(3).When(e =>  e.PagIbigId != null);
         RuleFor(e => e.PhilhealthId).MinimumLength(3).When(e => e.PhilhealthId != null);
         RuleFor(e => e.Rate).GreaterThanOrEqualTo(0).When(e => e.Rate != null);
         RuleFor(e => e.SalaryUnit).IsInEnum();
@@ -73,6 +73,7 @@ internal class CreateEmployeeCommandHandler : IRequestHandler<CreateEmployeeComm
                 MobileNumber: command.Address.MobileNumber),
             Tin = command.Tin,
             PagIbigId = command.PagIbigId,
+            PhilhealthId = command.PhilhealthId,
             Rate = command.Rate,
             SalaryUnit = command.SalaryUnit,
         };

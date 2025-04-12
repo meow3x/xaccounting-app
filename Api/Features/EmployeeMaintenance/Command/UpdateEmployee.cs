@@ -76,6 +76,7 @@ internal class UpdateEmployeeCommandHandler : IRequestHandler<UpdateEmployeeComm
              command.Address.MobileNumber);
         employee.Tin = command.Tin;
         employee.PagIbigId = command.PagIbigId;
+        employee.PhilhealthId = command.PhilhealthId;
         employee.Rate = command.Rate;
         employee.SalaryUnit = command.SalaryUnit;
     

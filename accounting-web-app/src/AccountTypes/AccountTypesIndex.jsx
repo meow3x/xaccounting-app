@@ -3,6 +3,9 @@ import { useState, useEffect } from "react";
 import { IconCross, IconEdit, IconPlus, IconTrash, IconX } from "@tabler/icons-react"
 import axios from "axios";
 
+const columns = [
+  // { accessor: }
+]
 export default function AccountTypesIndex() {
   const headers = [ "ID", "Account Type", "Controls" ]
   const [accountTypes, setAccountTypes] = useState([])

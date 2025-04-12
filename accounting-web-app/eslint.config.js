@@ -14,7 +14,7 @@ export default [
         ecmaVersion: 'latest',
         ecmaFeatures: { jsx: true },
         sourceType: 'module',
-      },
+      }
     },
     plugins: {
       'react-hooks': reactHooks,
@@ -27,7 +27,7 @@ export default [
       'react-refresh/only-export-components': [
         'warn',
         { allowConstantExport: true },
-      ],
+      ]
     },
   },
 ]
