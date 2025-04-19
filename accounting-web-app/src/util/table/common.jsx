@@ -8,8 +8,9 @@ export const PAGE_SIZES = [10, 20, 50, 100];
 
 export function usePaginationState(pageSizes) {
   const [pageSize, setPageSize] = useState(pageSizes[0]);
-  useEffect(() => { setPage(1); }, [pageSize]);
   const [page, setPage] = useState(1);
+
+  useEffect(() => { setPage(1); }, [pageSize]);
 
   return {
     recordsPerPage: pageSize,
@@ -64,16 +65,16 @@ export function Opt(value) {
   return value == null ? '' : value
 }
 
-export function DataTableRowActions({ onEditClick }) {
+export function DataTableRowActions({ onEditClick, onDeleteClick, onViewClick }) {
   return (
     <Group gap={4}  wrap="nowrap">
-      <ActionIcon size="sm" variant="subtle" color="green">
+      <ActionIcon size="sm" variant="subtle" color="green" onClick={onViewClick}>
         <IconEye size={16} />
       </ActionIcon>
       <ActionIcon size="sm" variant="subtle" color="blue" onClick={onEditClick}>
         <IconEdit size={16} />
       </ActionIcon>
-      <ActionIcon size="sm" variant="subtle" color="red">
+      <ActionIcon size="sm" variant="subtle" color="red" onClick={onDeleteClick}>
         <IconTrash size={16} />
       </ActionIcon>
     </Group>

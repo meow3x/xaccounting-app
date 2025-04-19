@@ -12,7 +12,7 @@ import {
   DataTableRowActions,
   DataTableWrapper, usePaginationState
 } from "src/util/table/common";
-import {getAccounts, useAccountTypes} from "src/ChartOfAccount/api";
+import {getAccounts, useAccountTypes, useGetAccounts} from "src/ChartOfAccount/api";
 import {showSuccessNotification} from "src/util/notification/notifications.js";
 import {MultiSelectFilter, TextFilter} from "src/Shared/Filters.jsx";
 
@@ -27,7 +27,7 @@ export default function AccountList() {
   const accountTypes = useAccountTypes()
 
   // filters
-  const [isFetching, setIsFetching] = useState(false)
+  // const [isFetching, setIsFetching] = useState(false)
   const [idQuery, setIdQuery] = useState('')
   const [debouncedId] = useDebouncedValue(idQuery, 300)
   const [nameQuery, setNameQuery] = useState('')
@@ -74,10 +74,27 @@ export default function AccountList() {
     }
   ]
 
-  // Page effect
+  // Pagination
   const paginationState = usePaginationState([10,20,50,100])
 
-  useEffect(() => {
+  const { data, isFetching } = useGetAccounts({
+    pagination: {
+      page: paginationState.page,
+      pageSize: paginationState.recordsPerPage,
+    },
+    filters: [
+      {
+        field: 'name',
+        value: debouncedName
+      },
+      {
+        field: 'account_type',
+        value: selectedAccountTypes.map(e => e)
+      }
+    ]
+  })
+
+  /*useEffect(() => {
     console.log('state', {
       page: paginationState.page,
       pageSize: paginationState.recordsPerPage,
@@ -114,7 +131,7 @@ export default function AccountList() {
     // Filters
     debouncedName,
     selectedAccountTypes,
-  ])
+  ])*/
 
   return (
     <>
@@ -151,8 +168,8 @@ export default function AccountList() {
 
       <DataTableWrapper
         columns={columns}
-        records={records}
-        totalRecords={totalRecords}
+        records={data?.records}
+        totalRecords={data?._meta.total}
         paginationState={paginationState}
         isFetching={isFetching} />
     </>
