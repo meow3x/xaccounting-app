@@ -5,6 +5,11 @@ using Ardalis.Result;
 using Ardalis.Result.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Api.Features.Shared.Dto;
+using Api.Features.Shared;
+using System.Text.Json;
+using QueryParser;
+using System.Reflection.Metadata.Ecma335;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -24,9 +29,23 @@ public class ChartOfAccountsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<AccountView[]> Get()
+    public async Task<ActionResult<IEnumerable<Account>>> Get(
+        [FromQuery(Name = "page_id")] int? pageId,
+        [FromQuery(Name = "page_size")] int? pageSize,
+        [FromQuery] string? q)
     {
-        return await _sender.Send(new GetAllAccountsQuery());
+        var request = new GetAllAccountsQuery(
+            string.IsNullOrEmpty(q) ? null : SearchQueryParser.Parse(q),
+            null,
+            new PageOptions(pageId ?? 1, pageSize ?? 30));
+
+        var result = await _sender.Send(request);
+
+        Response.Headers["X-Pagination-Total"] = result.Value.Total.ToString();
+        Response.Headers["X-Pagination-Page"] = result.Value.Page.ToString();
+        Response.Headers["X-Pagination-Page-Size"] = result.Value.PageSize.ToString();
+
+        return Ok(result.Value.Data);
     }
 
     [HttpGet("AccountTypes")]

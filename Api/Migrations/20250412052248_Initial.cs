@@ -8,7 +8,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Api.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialMigration : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -24,6 +24,32 @@ namespace Api.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_accounttypes", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "employees",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    employeeid = table.Column<string>(type: "character varying(25)", maxLength: 25, nullable: false),
+                    firstname = table.Column<string>(type: "text", nullable: false),
+                    lastname = table.Column<string>(type: "text", nullable: false),
+                    middlename = table.Column<string>(type: "text", nullable: true),
+                    address_street = table.Column<string>(type: "text", nullable: true),
+                    address_city = table.Column<string>(type: "text", nullable: true),
+                    address_province = table.Column<string>(type: "text", nullable: true),
+                    address_landlinenumber = table.Column<string>(type: "text", nullable: true),
+                    address_mobilenumber = table.Column<string>(type: "text", nullable: true),
+                    tin = table.Column<string>(type: "text", nullable: true),
+                    pagibigid = table.Column<string>(type: "text", nullable: true),
+                    philhealthid = table.Column<string>(type: "text", nullable: true),
+                    rate = table.Column<decimal>(type: "numeric", nullable: true),
+                    salaryunit = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_employees", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -106,14 +132,14 @@ namespace Api.Migrations
                     tin = table.Column<string>(type: "text", nullable: true),
                     discount = table.Column<decimal>(type: "numeric", nullable: true),
                     creditlimit = table.Column<decimal>(type: "numeric", nullable: true),
-                    termid = table.Column<int>(type: "integer", nullable: true)
+                    paymenttermid = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_customers", x => x.id);
                     table.ForeignKey(
-                        name: "fk_customers_paymentterms_termid",
-                        column: x => x.termid,
+                        name: "fk_customers_paymentterms_paymenttermid",
+                        column: x => x.paymenttermid,
                         principalTable: "paymentterms",
                         principalColumn: "id");
                 });
@@ -134,14 +160,14 @@ namespace Api.Migrations
                     tin = table.Column<string>(type: "text", nullable: true),
                     discount = table.Column<decimal>(type: "numeric", nullable: true),
                     creditlimit = table.Column<decimal>(type: "numeric", nullable: true),
-                    termid = table.Column<int>(type: "integer", nullable: true)
+                    paymenttermid = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_suppliers", x => x.id);
                     table.ForeignKey(
-                        name: "fk_suppliers_paymentterms_termid",
-                        column: x => x.termid,
+                        name: "fk_suppliers_paymentterms_paymenttermid",
+                        column: x => x.paymenttermid,
                         principalTable: "paymentterms",
                         principalColumn: "id");
                 });
@@ -284,9 +310,15 @@ namespace Api.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "ix_customers_termid",
+                name: "ix_customers_paymenttermid",
                 table: "customers",
-                column: "termid");
+                column: "paymenttermid");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_employees_employeeid",
+                table: "employees",
+                column: "employeeid",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "ix_items_categoryid",
@@ -305,15 +337,15 @@ namespace Api.Migrations
                 column: "uomid");
 
             migrationBuilder.CreateIndex(
+                name: "ix_suppliers_paymenttermid",
+                table: "suppliers",
+                column: "paymenttermid");
+
+            migrationBuilder.CreateIndex(
                 name: "ix_suppliers_supplierid",
                 table: "suppliers",
                 column: "supplierid",
                 unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "ix_suppliers_termid",
-                table: "suppliers",
-                column: "termid");
         }
 
         /// <inheritdoc />
@@ -324,6 +356,9 @@ namespace Api.Migrations
 
             migrationBuilder.DropTable(
                 name: "customers");
+
+            migrationBuilder.DropTable(
+                name: "employees");
 
             migrationBuilder.DropTable(
                 name: "items");

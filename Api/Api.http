@@ -1,10 +1,13 @@
 @Api_HostAddress = http://localhost:5124
 
-GET {{Api_HostAddress}}/weatherforecast/
-Accept: application/json
+
+GET {{Api_HostAddress}}/api/chartofaccounts?limit=5&pageId=0&q=accounttypeid:[1]
+##
+
+GET {{Api_HostAddress}}/api/chartofaccounts?pageId=0&count=30&q=accountTypeId:[3,4] AND name:Cash in bank AND accountId:100
+
 
 ###
-
 POST {{Api_HostAddress}}/api/chartofaccounts
 Content-Type: application/json
 {

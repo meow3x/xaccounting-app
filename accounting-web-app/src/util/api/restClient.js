@@ -24,3 +24,17 @@ export default function createRestClient(endpoint) {
     delete: async (id) => {}
   }
 }
+
+export function toQuerySyntax(e) {
+  const qValue = Array.isArray(e.value) ? '[' + e.value.join(',') + ']' : e.value
+  return `${e.field}:${qValue}`
+}
+
+export function isNonEmpty(e) {
+  if (typeof e == "string" && e.trim() === '') {
+    return false
+  } else if (Array.isArray(e) && e.length === 0) {
+    return false
+  }
+  return true
+}

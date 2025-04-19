@@ -6,6 +6,9 @@ using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Logging.ClearProviders()
+    .AddConsole();
+
 // Add services to the container.
 builder.Services.AddCors(options =>
 {
@@ -14,7 +17,13 @@ builder.Services.AddCors(options =>
         policy.AllowAnyOrigin();
         policy.AllowAnyMethod();
         policy.AllowAnyHeader();
+        policy.WithExposedHeaders("X-Pagination-Page", "X-Pagination-Page-Size", "X-Pagination-Total");
     });
+
+    //options.AddPolicy("Cors", builder =>
+    //{
+    //    builder.WithExposedHeaders("X-Pagination-*");
+    //});
 });
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
@@ -22,6 +31,7 @@ builder.Services.AddDbContextPool<ApplicationDbContext>(opt =>
 {
     opt.UseNpgsql(builder.Configuration.GetConnectionString("ApplicationContext"))
         .UseLowerCaseNamingConvention();
+    opt.EnableSensitiveDataLogging();
        
 });
 builder.Services.AddMediatR(config => config.RegisterServicesFromAssembly(typeof(Program).Assembly));

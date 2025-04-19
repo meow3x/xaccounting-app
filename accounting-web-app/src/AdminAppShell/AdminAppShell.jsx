@@ -27,6 +27,8 @@ export default function AdminAppShell() {
         </Group>
       </AppShell.Header>
 
+      <title>Administration</title>
+
       <AppShell.Navbar p="md" >
         <ScrollArea>
           <NavLink

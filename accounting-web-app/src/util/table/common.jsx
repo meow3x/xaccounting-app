@@ -6,8 +6,8 @@ import axios from "axios";
 
 export const PAGE_SIZES = [10, 20, 50, 100];
 
-export function useDataTablePagination() {
-  const [pageSize, setPageSize] = useState(PAGE_SIZES[0]);
+export function usePaginationState(pageSizes) {
+  const [pageSize, setPageSize] = useState(pageSizes[0]);
   useEffect(() => { setPage(1); }, [pageSize]);
   const [page, setPage] = useState(1);
 
@@ -20,19 +20,24 @@ export function useDataTablePagination() {
   };
 }
 
-export function DataTableWrapper({ columns, records, groups }) {
-  const paginationProps = useDataTablePagination();
+export function DataTableWrapper({
+                                   columns,
+                                   records,
+                                   paginationState,
+                                   totalRecords,
+                                   isFetching}) {
+  // const paginationProps = usePaginationDefaults(PAGE_SIZES);
 
   return (
     <DataTable
       striped
-      withColumnBorders
       highlightOnHover
-      minHeight={150}
+      minHeight={200}
       columns={columns}
       records={records}
-      totalRecords={records.length}
-      {...paginationProps}
+      totalRecords={totalRecords}
+      fetching={isFetching}
+      {...paginationState}
     />
   );
 }

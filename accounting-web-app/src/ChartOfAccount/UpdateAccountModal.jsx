@@ -1,16 +1,10 @@
-import { Modal} from "@mantine/core";
-import { useEffect } from "react";
-import {
-  updateAccount,
-  useAccount,
-  useAccountTypes
-} from "src/ChartOfAccount/api.js";
+import { Modal } from "@mantine/core";
+import { updateAccount,  useAccount } from "src/ChartOfAccount/api.js";
 import { AccountForm, makeChartFormParams } from "src/ChartOfAccount/AccountForm.jsx";
 import {useForm} from "@mantine/form";
 
-export default function CreateAccountModal({ opened, onClose, onAccountUpdated, accountId}) {
+export default function UpdateAccountModal({ opened, onClose, accountTypes, onAccountUpdated, accountId}) {
   const form = useForm(makeChartFormParams());
-  const accountTypes = useAccountTypes()
 
   useAccount(accountId, (account) => {
     const values = {

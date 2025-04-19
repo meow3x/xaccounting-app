@@ -1,10 +1,9 @@
 import { Modal } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { AccountForm, makeChartFormParams } from "src/ChartOfAccount/AccountForm.jsx";
-import { createAccount,  useAccountTypes } from "src/ChartOfAccount/api.js";
+import { createAccount } from "src/ChartOfAccount/api.js";
 
-export default function CreateAccountModal({ opened, onClose, onAccountCreated }) {
-  const accountTypes = useAccountTypes();
+export default function CreateAccountModal({ opened, onClose, onAccountCreated, accountTypes }) {
   const form = useForm(makeChartFormParams())
 
   function handleSubmit(formData) {
