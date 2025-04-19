@@ -24,7 +24,7 @@ public static class GetAccountTypes
             return await _dbContext.AccountTypes
                 .AsNoTracking()
                 .OrderBy(e => e.Id)
-                .Select(e => new GetAccountTypeResponse(e.Id, e.Label!))
+                .Select(e => new GetAccountTypeResponse(e.Id, e.Name!))
                 .ToArrayAsync(cancellationToken);
         }
     }

@@ -1,10 +1,14 @@
 import axios from "axios";
 
-export default function createRestClient(endpoint) {
+export default function createBasicClient(endpoint) {
   return {
-    getAll: async () => {
-      const result = await axios.get(endpoint);
-      return result.data;
+    /**
+     * Create a "getAll" client with pagination, filtering, & sorting support.
+     * @param options
+     * @returns {Promise<any>}
+     */
+    getAll: async (options = {}) => {
+      return await defaultGetAll(endpoint, options);
     },
     getById: async (id) => {
       if (id == null) {
@@ -23,6 +27,32 @@ export default function createRestClient(endpoint) {
     },
     delete: async (id) => {}
   }
+}
+
+export async function defaultGetAll(endpoint, options = {}) {
+  const filters  = options.filters || []
+  const pagination = options.pagination
+  const searchParams = new URLSearchParams();
+
+  if (filters.length > 0) {
+    const searchTerms = filters.filter(e => isNonEmpty(e.value)).map(toQuerySyntax)
+    if (searchTerms.length > 0) {
+      searchParams.set('q', searchTerms.join(' AND '))
+    }
+  }
+
+  if (pagination != null) {
+    searchParams.set('page_id', pagination.page)
+    searchParams.set('page_size', pagination.pageSize)
+  }
+
+  const result = await axios.get(endpoint + (searchParams.size > 0 ? `?${searchParams}` : ''))
+  return {
+    _meta: {
+      total: parseInt(result.headers['x-pagination-total'])
+    },
+    records: result.data
+  };
 }
 
 export function toQuerySyntax(e) {

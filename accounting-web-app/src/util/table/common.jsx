@@ -1,24 +1,8 @@
-import { ActionIcon, Box, Group } from "@mantine/core";
-import { IconEdit, IconEye, IconSettingsCog, IconTrash } from "@tabler/icons-react";
-import { DataTable } from "mantine-datatable";
-import { useState, useEffect } from "react";
-import axios from "axios";
+import {ActionIcon, Group} from "@mantine/core";
+import {IconEdit, IconEye, IconTrash} from "@tabler/icons-react";
+import {DataTable} from "mantine-datatable";
 
 export const PAGE_SIZES = [10, 20, 50, 100];
-
-export function usePaginationState(pageSizes) {
-  const [pageSize, setPageSize] = useState(pageSizes[0]);
-  useEffect(() => { setPage(1); }, [pageSize]);
-  const [page, setPage] = useState(1);
-
-  return {
-    recordsPerPage: pageSize,
-    page: page,
-    onPageChange: setPage,
-    recordsPerPageOptions: PAGE_SIZES,
-    onRecordsPerPageChange: setPageSize
-  };
-}
 
 export function DataTableWrapper({
                                    columns,
@@ -64,16 +48,16 @@ export function Opt(value) {
   return value == null ? '' : value
 }
 
-export function DataTableRowActions({ onEditClick }) {
+export function DataTableRowActions({ onEditClick, onDeleteClick, onViewClick }) {
   return (
     <Group gap={4}  wrap="nowrap">
-      <ActionIcon size="sm" variant="subtle" color="green">
+      <ActionIcon size="sm" variant="subtle" color="green" onClick={onViewClick}>
         <IconEye size={16} />
       </ActionIcon>
       <ActionIcon size="sm" variant="subtle" color="blue" onClick={onEditClick}>
         <IconEdit size={16} />
       </ActionIcon>
-      <ActionIcon size="sm" variant="subtle" color="red">
+      <ActionIcon size="sm" variant="subtle" color="red" onClick={onDeleteClick}>
         <IconTrash size={16} />
       </ActionIcon>
     </Group>

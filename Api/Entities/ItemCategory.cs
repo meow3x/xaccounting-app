@@ -1,10 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Api.Entities
+namespace Api.Entities;
+
+public class ItemCategory : BaseEntity
 {
-    public class ItemCategory : BaseEntity
-    {
-        [MaxLength(255)]
-        public required string Name { get; set; }
-    }
+    [MaxLength(255)]
+    public required string Name { get; set; }
 }

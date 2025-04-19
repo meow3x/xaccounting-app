@@ -1,18 +1,31 @@
 import { Modal } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { AccountForm, makeChartFormParams } from "src/ChartOfAccount/AccountForm.jsx";
-import { createAccount } from "src/ChartOfAccount/api.js";
+import { AccountForm, createCoaFormParams } from "src/ChartOfAccount/AccountForm.jsx";
+import {createAccount, useCreateAccount} from "src/ChartOfAccount/api.js";
+import {useQueryClient} from "@tanstack/react-query";
 
 export default function CreateAccountModal({ opened, onClose, onAccountCreated, accountTypes }) {
-  const form = useForm(makeChartFormParams())
+  const form = useForm(createCoaFormParams())
+  const mutation = useCreateAccount()
+  const queryClient = useQueryClient()
 
   function handleSubmit(formData) {
-    createAccount(formData)
-      .then((account) => {
+    mutation.mutate(formData, {
+      onSuccess: (data) => {
+        queryClient.invalidateQueries({ queryKey: ['accounts' ]})
+
         form.reset()
-        onAccountCreated?.(account)
         onClose()
-      })
+        onAccountCreated?.(data)
+      }
+    })
+
+    // createAccount(formData)
+    //   .then((account) => {
+    //     form.reset()
+    //     onAccountCreated?.(account)
+    //     onClose()
+    //   })
   }
 
   return (

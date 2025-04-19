@@ -43,7 +43,7 @@ export function AccountForm({ formController, handleSubmit, accountTypes }) {
   )
 }
 
-export function makeChartFormParams() {
+export function createCoaFormParams() {
   return {
     mode: 'uncontrolled',
     initialValues: {

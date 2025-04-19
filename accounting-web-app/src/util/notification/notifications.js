@@ -4,7 +4,7 @@ export function showSuccessNotification(message) {
   notifications.show({
     title: 'Success',
     message,
-    position: 'bottom-left',
+    position: 'bottom-right',
     color: 'teal',
     withBorder: true
   })

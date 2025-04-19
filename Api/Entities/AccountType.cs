@@ -9,5 +9,5 @@ namespace Api.Entities;
 
 public class AccountType : BaseEntity
 {
-    public string? Label { get; set; }
+    public string? Name { get; set; }
 }

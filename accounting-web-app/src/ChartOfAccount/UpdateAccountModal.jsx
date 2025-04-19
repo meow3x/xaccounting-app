@@ -1,10 +1,13 @@
 import { Modal } from "@mantine/core";
-import { updateAccount,  useAccount } from "src/ChartOfAccount/api.js";
-import { AccountForm, makeChartFormParams } from "src/ChartOfAccount/AccountForm.jsx";
+import {updateAccount, useAccount, useUpdateAccount} from "src/ChartOfAccount/api.js";
+import { AccountForm, createCoaFormParams } from "src/ChartOfAccount/AccountForm.jsx";
 import {useForm} from "@mantine/form";
+import {useQueryClient} from "@tanstack/react-query";
 
 export default function UpdateAccountModal({ opened, onClose, accountTypes, onAccountUpdated, accountId}) {
-  const form = useForm(makeChartFormParams());
+  const form = useForm(createCoaFormParams());
+  const mutation = useUpdateAccount()
+  const queryClient = useQueryClient()
 
   useAccount(accountId, (account) => {
     const values = {
@@ -17,12 +20,18 @@ export default function UpdateAccountModal({ opened, onClose, accountTypes, onAc
   })
 
   function handleSubmit (formData)  {
-    updateAccount(accountId, formData)
-      .then(account => {
+    mutation.mutate({
+      id: accountId,
+      account: formData
+    }, {
+      onSuccess: (data) => {
+        queryClient.invalidateQueries({ queryKey: ['accounts'] })
+
         form.reset()
         onClose()
-        onAccountUpdated(account)
-      })
+        onAccountUpdated?.(data)
+      }
+    })
   }
 
   return (

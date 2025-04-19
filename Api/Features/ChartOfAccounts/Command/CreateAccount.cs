@@ -27,11 +27,11 @@ public class CreateAccountCommandValidator : AbstractValidator<CreateAccountComm
     }
 }
 
-internal sealed class CreateAccountHandler : IRequestHandler<CreateAccountCommand, Result<Account>>
+internal sealed class CreateAccountCommandHandler : IRequestHandler<CreateAccountCommand, Result<Account>>
 {
     private readonly ApplicationDbContext _dbContext;
 
-    public CreateAccountHandler(ApplicationDbContext dbContext)
+    public CreateAccountCommandHandler(ApplicationDbContext dbContext)
     {
         _dbContext = dbContext;
     }

@@ -10,24 +10,21 @@ import UpdateAccountModal from "./UpdateAccountModal.jsx";
 import {
   Peso,
   DataTableRowActions,
-  DataTableWrapper, usePaginationState
+  DataTableWrapper
 } from "src/util/table/common";
-import {getAccounts, useAccountTypes} from "src/ChartOfAccount/api";
+import {getAccounts, useAccountTypes, useGetAccounts} from "src/ChartOfAccount/api";
 import {showSuccessNotification} from "src/util/notification/notifications.js";
 import {MultiSelectFilter, TextFilter} from "src/Shared/Filters.jsx";
+import {usePaginationState} from "src/util/table/pagination.jsx";
 
 export default function AccountList() {
   const [isCreateModalOpen, createModalFn] = useDisclosure(false)
   const [isUpdateModalOpen, updateModalFn] = useDisclosure(false)
-  
   const [targetEdit, setTargetEdit] = useState(null)
-
-  const [records, setRecords] = useState([])
-  const [totalRecords, setTotalRecords] = useState(0)
-  const accountTypes = useAccountTypes()
+  const { data: accountTypes } = useAccountTypes()
 
   // filters
-  const [isFetching, setIsFetching] = useState(false)
+  // const [isFetching, setIsFetching] = useState(false)
   const [idQuery, setIdQuery] = useState('')
   const [debouncedId] = useDebouncedValue(idQuery, 300)
   const [nameQuery, setNameQuery] = useState('')
@@ -50,7 +47,7 @@ export default function AccountList() {
       filter: (
         <MultiSelectFilter
           label="Account type"
-          data={accountTypes.map(e => ({
+          data={accountTypes?.map(e => ({
             value: e.id.toString(),
             label: e.label
           }))}
@@ -74,47 +71,25 @@ export default function AccountList() {
     }
   ]
 
-  // Page effect
+  // Pagination
   const paginationState = usePaginationState([10,20,50,100])
 
-  useEffect(() => {
-    console.log('state', {
+  const { data, isFetching } = useGetAccounts({
+    pagination: {
       page: paginationState.page,
       pageSize: paginationState.recordsPerPage,
-      name: debouncedName,
-      selectedAccountTypes: selectedAccountTypes
-    })
-    setIsFetching(true)
-
-    getAccounts({
-      pagination: {
-        page: paginationState.page,
-        pageSize: paginationState.recordsPerPage,
+    },
+    filters: [
+      {
+        field: 'name',
+        value: debouncedName
       },
-      filters: [
-        {
-          field: 'name',
-          value: debouncedName
-        },
-        {
-          field: 'account_type',
-          value: selectedAccountTypes.map(e => e)
-        }
-      ]
-    }).then(e => {
-      setTotalRecords(e._meta.total)
-      setRecords(e.data)
-    }).finally(() => {
-      setIsFetching(false)
-    })
-  // Add recordsPerPage to allow refetch if page size was changed on current page
-  }, [
-    paginationState.page,
-    paginationState.recordsPerPage,
-    // Filters
-    debouncedName,
-    selectedAccountTypes,
-  ])
+      {
+        field: 'account_type',
+        value: selectedAccountTypes.map(e => e)
+      }
+    ]
+  })
 
   return (
     <>
@@ -124,7 +99,6 @@ export default function AccountList() {
         accountTypes={accountTypes}
         onAccountCreated={(account) => {
           showSuccessNotification(`Account ${account.accountId} - ${account.name} created.`)
-          // getAccounts().then(setRecords)
         }}/>
 
       <UpdateAccountModal
@@ -135,7 +109,6 @@ export default function AccountList() {
         onAccountUpdated={(account) => {
           setTargetEdit(null);
           showSuccessNotification(`Account ${account.accountId} - ${account.name} updated.`)
-          // getAccounts().then(setRecords)
         }} />
 
       <Group justify="left" gap={4} mb={30}>
@@ -151,8 +124,8 @@ export default function AccountList() {
 
       <DataTableWrapper
         columns={columns}
-        records={records}
-        totalRecords={totalRecords}
+        records={data?.records}
+        totalRecords={data?._meta.total}
         paginationState={paginationState}
         isFetching={isFetching} />
     </>
