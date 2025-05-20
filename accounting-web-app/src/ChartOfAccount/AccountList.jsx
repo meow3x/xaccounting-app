@@ -1,8 +1,9 @@
-import {ActionIcon, Button, Group, MultiSelect, TextInput} from "@mantine/core"
+import {ActionIcon, Button, Group, MultiSelect, Text, TextInput, Title} from "@mantine/core"
 import { useEffect, useState } from "react"
 import {
+  IconCirclePlus,
   IconFileImport,
-  IconPlus, IconSearch, IconX
+  IconPlus, IconSearch, IconUpload, IconX
 } from "@tabler/icons-react"
 import {useDebouncedValue, useDisclosure} from "@mantine/hooks"
 import CreateAccountModal from "./CreateAccountModal.jsx"
@@ -16,6 +17,7 @@ import {getAccounts, useAccountTypes, useGetAccounts} from "src/ChartOfAccount/a
 import {showSuccessNotification} from "src/util/notification/notifications.js";
 import {MultiSelectFilter, TextFilter} from "src/Shared/Filters.jsx";
 import {usePaginationState} from "src/util/table/pagination.jsx";
+import CrudToolbar from "src/Shared/CrudToolbar.jsx";
 
 export default function AccountList() {
   const [isCreateModalOpen, createModalFn] = useDisclosure(false)
@@ -42,7 +44,7 @@ export default function AccountList() {
       filter: <TextFilter label="Name" query={nameQuery} setQuery={setNameQuery} />
     },
     {
-      accessor: 'accountType.label',
+      accessor: 'accountType.name',
       title: 'Account Type',
       filter: (
         <MultiSelectFilter
@@ -111,16 +113,7 @@ export default function AccountList() {
           showSuccessNotification(`Account ${account.accountId} - ${account.name} updated.`)
         }} />
 
-      <Group justify="left" gap={4} mb={30}>
-        <Button
-          variant="filled"
-          rightSection={<IconPlus size={16} />}
-          onClick={createModalFn.open}
-        >
-          New
-        </Button>
-        <Button variant="outline" rightSection={<IconFileImport size={16} />}>Import</Button>
-      </Group>
+      <CrudToolbar title="Chart Of Accounts" onCreate={createModalFn.open} />
 
       <DataTableWrapper
         columns={columns}

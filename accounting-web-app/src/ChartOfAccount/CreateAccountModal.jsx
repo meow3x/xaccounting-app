@@ -19,13 +19,6 @@ export default function CreateAccountModal({ opened, onClose, onAccountCreated, 
         onAccountCreated?.(data)
       }
     })
-
-    // createAccount(formData)
-    //   .then((account) => {
-    //     form.reset()
-    //     onAccountCreated?.(account)
-    //     onClose()
-    //   })
   }
 
   return (

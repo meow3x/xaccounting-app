@@ -86,14 +86,14 @@ public class PurchaseOrder : BaseEntity
     public decimal VatableAmount { get; set; }
     public decimal VatAmount { get; set; }
     public decimal Discounted { get; set; }
-    public decimal NetAmount { get; set; }
+    public decimal NetAmount { get; set; } // FIXME: Gross - Discounted
 
     public OrderStatus Status { get; set; } = OrderStatus.Open;
 
     [Column(TypeName = "timestamp without time zone")]
     public DateTime? ClosedAt { get; set; } = null;
 
-    // Journal Posting
+    // FIXME: This shouldn't be here
     public int DebitTo { get; set; }
     public int CreditTo { get; set; } // Is this even used
     //public required JournalType JournalType { get; set; }

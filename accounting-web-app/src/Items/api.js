@@ -1,5 +1,6 @@
 import axios from "axios";
 import {useEffect, useState} from "react";
+import {useQuery} from "@tanstack/react-query";
 
 export async function getItemCategories() {
   const result = await axios.get('/api/Items/Categories');
@@ -61,4 +62,12 @@ export function useItem(id, handlerFn) {
     }
   }, [id])
   return item
+}
+
+export function useGetItems() {
+  return useQuery({
+    queryKey: [ 'items' ],
+    queryFn: getItems,
+    staleTime: 60 * 1000 * 5
+  })
 }

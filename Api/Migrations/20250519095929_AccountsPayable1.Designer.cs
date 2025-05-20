@@ -3,6 +3,7 @@ using System;
 using Api.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250519095929_AccountsPayable1")]
+    partial class AccountsPayable1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -244,26 +247,9 @@ namespace Api.Migrations
                         .HasColumnType("timestamp without time zone")
                         .HasColumnName("createdat");
 
-                    b.Property<DateOnly?>("DueDate")
-                        .HasColumnType("date")
-                        .HasColumnName("duedate");
-
-                    b.Property<int>("JournalEntryId")
-                        .HasColumnType("integer")
-                        .HasColumnName("journalentryid");
-
-                    b.Property<string>("ReferenceNumber")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("referencenumber");
-
                     b.Property<int>("SupplierId")
                         .HasColumnType("integer")
                         .HasColumnName("supplierid");
-
-                    b.Property<int?>("Terms")
-                        .HasColumnType("integer")
-                        .HasColumnName("terms");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp without time zone")
@@ -279,9 +265,6 @@ namespace Api.Migrations
 
                     b.HasKey("Id")
                         .HasName("pk_accountspayable");
-
-                    b.HasIndex("JournalEntryId")
-                        .HasDatabaseName("ix_accountspayable_journalentryid");
 
                     b.HasIndex("SupplierId")
                         .HasDatabaseName("ix_accountspayable_supplierid");
@@ -750,6 +733,10 @@ namespace Api.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("AccountsPayableId")
+                        .HasColumnType("integer")
+                        .HasColumnName("accountspayableid");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp without time zone")
                         .HasColumnName("createdat");
@@ -773,6 +760,10 @@ namespace Api.Migrations
 
                     b.HasKey("Id")
                         .HasName("pk_journalentries");
+
+                    b.HasIndex("AccountsPayableId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_journalentries_accountspayableid");
 
                     b.HasIndex("JournalTypeId")
                         .HasDatabaseName("ix_journalentries_journaltypeid");
@@ -810,6 +801,7 @@ namespace Api.Migrations
                         .HasColumnName("debit");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("description");
 
@@ -977,68 +969,6 @@ namespace Api.Migrations
                         .HasDatabaseName("ix_lineitems_purchaseorderid");
 
                     b.ToTable("lineitems", (string)null);
-                });
-
-            modelBuilder.Entity("Api.Entities.Payment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("ChequeStatus")
-                        .HasColumnType("integer")
-                        .HasColumnName("chequestatus");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("createdat");
-
-                    b.Property<bool>("IsCheque")
-                        .HasColumnType("boolean")
-                        .HasColumnName("ischeque");
-
-                    b.Property<int>("JournalEntryId")
-                        .HasColumnType("integer")
-                        .HasColumnName("journalentryid");
-
-                    b.Property<int>("PayeeId")
-                        .HasColumnType("integer")
-                        .HasColumnName("payeeid");
-
-                    b.Property<string>("ReferenceNumber")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("referencenumber");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("updatedat");
-
-                    b.Property<int>("VoucherNumber")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("vouchernumber");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<int>("VoucherNumber"));
-                    NpgsqlPropertyBuilderExtensions.HasIdentityOptions(b.Property<int>("VoucherNumber"), 10000L, null, null, null, null, null);
-
-                    b.HasKey("Id")
-                        .HasName("pk_payments");
-
-                    b.HasIndex("JournalEntryId")
-                        .HasDatabaseName("ix_payments_journalentryid");
-
-                    b.HasIndex("PayeeId")
-                        .HasDatabaseName("ix_payments_payeeid");
-
-                    b.HasIndex("VoucherNumber")
-                        .IsUnique()
-                        .HasDatabaseName("ix_payments_vouchernumber");
-
-                    b.ToTable("payments", (string)null);
                 });
 
             modelBuilder.Entity("Api.Entities.PaymentTerm", b =>
@@ -1534,21 +1464,12 @@ namespace Api.Migrations
 
             modelBuilder.Entity("Api.Entities.AccountsPayable", b =>
                 {
-                    b.HasOne("Api.Entities.JournalEntry", "JournalEntry")
-                        .WithMany()
-                        .HasForeignKey("JournalEntryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_accountspayable_journalentries_journalentryid");
-
                     b.HasOne("Api.Entities.Supplier", "Supplier")
                         .WithMany()
                         .HasForeignKey("SupplierId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_accountspayable_suppliers_supplierid");
-
-                    b.Navigation("JournalEntry");
 
                     b.Navigation("Supplier");
                 });
@@ -1696,6 +1617,11 @@ namespace Api.Migrations
 
             modelBuilder.Entity("Api.Entities.JournalEntry", b =>
                 {
+                    b.HasOne("Api.Entities.AccountsPayable", null)
+                        .WithOne("JournalEntry")
+                        .HasForeignKey("Api.Entities.JournalEntry", "AccountsPayableId")
+                        .HasConstraintName("fk_journalentries_accountspayable_accountspayableid");
+
                     b.HasOne("Api.Entities.JournalType", "JournalType")
                         .WithMany()
                         .HasForeignKey("JournalTypeId")
@@ -1794,27 +1720,6 @@ namespace Api.Migrations
                     b.Navigation("OriginalItem");
                 });
 
-            modelBuilder.Entity("Api.Entities.Payment", b =>
-                {
-                    b.HasOne("Api.Entities.JournalEntry", "JournalEntry")
-                        .WithMany()
-                        .HasForeignKey("JournalEntryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_payments_journalentries_journalentryid");
-
-                    b.HasOne("Api.Entities.Supplier", "Payee")
-                        .WithMany()
-                        .HasForeignKey("PayeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_payments_suppliers_payeeid");
-
-                    b.Navigation("JournalEntry");
-
-                    b.Navigation("Payee");
-                });
-
             modelBuilder.Entity("Api.Entities.PurchaseOrder", b =>
                 {
                     b.HasOne("Api.Entities.Account", null)
@@ -1896,6 +1801,12 @@ namespace Api.Migrations
                         .IsRequired();
 
                     b.Navigation("PaymentTerm");
+                });
+
+            modelBuilder.Entity("Api.Entities.AccountsPayable", b =>
+                {
+                    b.Navigation("JournalEntry")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Api.Entities.Inventory", b =>

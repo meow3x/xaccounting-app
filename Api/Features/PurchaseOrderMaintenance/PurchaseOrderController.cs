@@ -30,6 +30,14 @@ public class PurchaseOrderController : ControllerBase
         return new string[] { "value1", "value2" };
     }
 
+    [HttpGet("Projects")]
+    public async Task<IEnumerable<Project>> GetProjects()
+    {
+        return await _dbContext.Projects
+            .AsNoTracking()
+            .ToListAsync();
+    }
+
     // GET api/<PurchaseOrderController>/5
     [HttpGet("{orderNumber}")]
     public async Task<ActionResult<PurchaseOrder>> Get([FromRoute] int orderNumber)

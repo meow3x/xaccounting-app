@@ -1,5 +1,6 @@
 import {useEffect, useState} from "react";
 import axios from "axios";
+import {useQuery} from "@tanstack/react-query";
 
 // export const restFactory = createRestFactory({endpoint: '/api/Suppliers'});
 
@@ -50,4 +51,12 @@ export function usePaymentTerms() {
     getPaymentTerms().then(setPaymentTerms);
   }, [])
   return paymentTerms;
+}
+
+export function useGetSuppliers() {
+  return useQuery({
+    queryKey: [ 'suppliers' ],
+    queryFn: getSuppliers,
+    staleTime: 60 * 1000 * 5
+  })
 }

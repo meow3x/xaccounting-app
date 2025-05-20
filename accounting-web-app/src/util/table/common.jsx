@@ -1,4 +1,4 @@
-import {ActionIcon, Group} from "@mantine/core";
+import {ActionIcon, Group, Text} from "@mantine/core";
 import {IconEdit, IconEye, IconTrash} from "@tabler/icons-react";
 import {DataTable} from "mantine-datatable";
 
@@ -62,4 +62,9 @@ export function DataTableRowActions({ onEditClick, onDeleteClick, onViewClick })
       </ActionIcon>
     </Group>
   )
+}
+
+export function Heading({text})  {
+  return <Text size="lg" c="gray.6" fw={400}>{text}</Text>
+
 }

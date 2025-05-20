@@ -8,6 +8,8 @@ import SupplierList from "src/Suppliers/SupplierList.jsx";
 import {createTheme, MantineProvider} from "@mantine/core";
 import EmployeeList from "src/Employees/EmployeeList.jsx";
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
+import PurchaseOrderIndex from "src/PurchaseOrder/PurchaseOrderIndex.jsx";
+import ReceivePurchaseOrder from "src/PurchaseOrder/ReceivePurchaseOrder.jsx";
 
 const theme = createTheme({
   fontFamily: 'Funnel Sans, sans-serif'
@@ -29,6 +31,8 @@ export default function App() {
               <Route path="customers" element={<CustomerList />} />
               <Route path="suppliers" element={<SupplierList />} />
               <Route path="employees" element={<EmployeeList />} />
+              <Route path="purchase-order" element={<PurchaseOrderIndex />} />
+              <Route path="receive-purchase-order" element={<ReceivePurchaseOrder />} />
             </Route>
           </Routes>
         </BrowserRouter>

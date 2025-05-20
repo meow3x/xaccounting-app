@@ -42,8 +42,8 @@ public class JournalController : ControllerBase
         return "value";
     }
 
-    // POST api/<JournalController>
-    [HttpPost]
+    // POST to payables journal
+    [HttpPost("Payables")]
     public void Post([FromBody] string value)
     {
     }

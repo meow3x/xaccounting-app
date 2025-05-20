@@ -17,50 +17,67 @@ export default function AdminAppShell() {
 
   return (
     <AppShell
-      header={{ height: 50 }}
+      // header={{ height: 50 }}
       navbar={{ width: 300, breakpoint: 'sm', collapsed: { mobile: !opened } }}
       padding="md">
-      <AppShell.Header>
-        <Group h="100%" px="md">
-          <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
-          <MantineLogo size={30} />
-        </Group>
-      </AppShell.Header>
+      {/*<AppShell.Header>*/}
+      {/*  <Group h="100%" px="md">*/}
+      {/*    <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />*/}
+      {/*    <MantineLogo size={30} />*/}
+      {/*  </Group>*/}
+      {/*</AppShell.Header>*/}
 
       <title>Administration</title>
 
-      <AppShell.Navbar p="md" >
+      <AppShell.Navbar p="md">
         <ScrollArea>
           <NavLink
             label="Maintenance"
             leftSection={<IconSettingsCog size={16} />}
-            childrenOffset={28}
+            childrenOffset="sm"
             defaultOpened>
             <NavLink
-              leftSection={<IconBook size={16} />}
+              // leftSection={<IconBook size={16} />}
               component={ReactNavLink}
               label="Chart of Account"
               to="chart-of-account" />
             <NavLink
-              leftSection={<IconInvoice size={16} />}
+              // leftSection={<IconInvoice size={16} />}
               component={ReactNavLink}
               label="Items"
               to="items" />
             <NavLink
-              leftSection={<IconUser size={16} />}
+              // leftSection={<IconUser size={16} />}
               component={ReactNavLink}
               label="Customers"
               to="customers" />
             <NavLink
-              leftSection={<IconBuilding size={16} />}
+              // leftSection={<IconBuilding size={16} />}
               component={ReactNavLink}
               label="Suppliers"
               to="suppliers" />
             <NavLink
-              leftSection={<IconUsers size={16} />}
+              // leftSection={<IconUsers size={16} />}
               component={ReactNavLink}
               label="Employees"
               to="employees" />
+          </NavLink>
+
+          <NavLink
+            label="Vendor & Purchases"
+            leftSection={<IconInvoice size={16} />}
+            childrenOffset="sm"
+            defaultOpened
+          >
+            <NavLink
+              component={ReactNavLink}
+              label="Create Purchase Order"
+              to="purchase-order" />
+
+            <NavLink
+              component={ReactNavLink}
+              label="PO Payable"
+              to="receive-purchase-order" />
           </NavLink>
         </ScrollArea>
       </AppShell.Navbar>

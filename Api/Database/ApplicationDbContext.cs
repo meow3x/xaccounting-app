@@ -28,6 +28,11 @@ public class ApplicationDbContext : DbContext
     public DbSet<JournalType> JournalTypes { get; set; }
     public DbSet<JournalEntry> JournalEntries { get; set; }
     public DbSet<JournalLine> JournalLines { get; set; }
+    public DbSet<Inventory> Inventory { get; set; }
+    public DbSet<InventoryLog> InventoryLogs { get; set; }
+    public DbSet<CostCenter> CostCenters { get; set; }
+    public DbSet<AccountsPayable> AccountsPayable { get; set; }
+    public DbSet<Payment> Payments { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -150,5 +155,20 @@ public class ApplicationDbContext : DbContext
             .HasData(
                 new Project { Id = 1, Number = "DEFP001", Name = "Default Project", CreatedAt = epoch, UpdatedAt = epoch }
             );
+
+        modelBuilder.Entity<CostCenter>()
+            .HasData(
+                new CostCenter { Id = 1, Name = "Default Cost Center", CreatedAt = epoch,  UpdatedAt = epoch }
+            );
+
+        modelBuilder.Entity<AccountsPayable>()
+            .Property(po => po.VoucherNumber)
+            .UseIdentityAlwaysColumn()
+            .HasIdentityOptions(startValue: 1000);
+
+        modelBuilder.Entity<Payment>()
+            .Property(d => d.VoucherNumber)
+            .UseIdentityAlwaysColumn()
+            .HasIdentityOptions(startValue: 10_000);
     }
 }
