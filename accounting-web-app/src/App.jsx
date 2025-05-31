@@ -10,9 +10,11 @@ import EmployeeList from "src/Employees/EmployeeList.jsx";
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 import PurchaseOrderIndex from "src/PurchaseOrder/PurchaseOrderIndex.jsx";
 import ReceivePurchaseOrder from "src/PurchaseOrder/ReceivePurchaseOrder.jsx";
+import AccountsPayableIndex from "./AccountsPayable/AccountsPayableIndex";
+import DisbursementIndex from "./Disbursements/DisbursementIndex";
 
 const theme = createTheme({
-  fontFamily: 'Funnel Sans, sans-serif'
+  fontFamily: 'Roboto Condensed, sans-serif'
 })
 
 const queryClient = new QueryClient();
@@ -33,6 +35,8 @@ export default function App() {
               <Route path="employees" element={<EmployeeList />} />
               <Route path="purchase-order" element={<PurchaseOrderIndex />} />
               <Route path="receive-purchase-order" element={<ReceivePurchaseOrder />} />
+              <Route path="accounts-payable" element={<AccountsPayableIndex />} />
+              <Route path="disbursements" element={<DisbursementIndex />} />
             </Route>
           </Routes>
         </BrowserRouter>

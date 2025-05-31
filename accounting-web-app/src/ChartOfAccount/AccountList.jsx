@@ -26,7 +26,6 @@ export default function AccountList() {
   const { data: accountTypes } = useAccountTypes()
 
   // filters
-  // const [isFetching, setIsFetching] = useState(false)
   const [idQuery, setIdQuery] = useState('')
   const [debouncedId] = useDebouncedValue(idQuery, 300)
   const [nameQuery, setNameQuery] = useState('')

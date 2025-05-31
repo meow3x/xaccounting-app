@@ -67,7 +67,9 @@ public class CreateAccountsPayableCommandHandler
             return Result<AccountsPayable>.Invalid(validation.AsErrors());
         }
 
+        decimal total = 0.0m;
         List<JournalLine> lines = [];
+
         foreach(var jl in request.Lines)
         {
             CostCenter? costCenter = null;
@@ -89,6 +91,8 @@ public class CreateAccountsPayableCommandHandler
                 Credit = jl.Credit,
                 CostCenter = costCenter
             });
+
+            if (jl.Debit.HasValue) total += jl.Debit.Value;
         }
 
         var ap = new AccountsPayable
@@ -101,7 +105,9 @@ public class CreateAccountsPayableCommandHandler
                 JournalType = (await _dbContext.JournalTypes.FindAsync([PAYABLES_JOURNAL_PK], cancellationToken))!,
                 Description = "",
                 Lines = lines
-            }
+            },
+            TotalAmount = total,
+            Balance = total
         };
 
         await _dbContext.AccountsPayable.AddAsync(ap, cancellationToken);

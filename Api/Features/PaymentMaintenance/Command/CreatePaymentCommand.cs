@@ -7,6 +7,7 @@ using Ardalis.Result;
 using Ardalis.Result.FluentValidation;
 using FluentValidation;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 
 namespace Api.Features.PaymentMaintenance.Command;
@@ -14,6 +15,7 @@ namespace Api.Features.PaymentMaintenance.Command;
 public record CreatePaymentCommand(
     int PayeeId,
     bool IsCheque,
+    int ApVoucherNumber, // Source A/P
     string ReferenceNumber,
     List<JournalEntryLine> Lines
 ) : IRequest<Result<Payment>>
@@ -31,6 +33,7 @@ public class CreatePaymentCommandValidator : AbstractValidator<CreatePaymentComm
     {
         RuleFor(e => e.PayeeId).NotEmpty();
         RuleFor(e => e.IsCheque).NotNull();
+        RuleFor(e => e.ApVoucherNumber).NotEmpty();
         RuleFor(e => e.ReferenceNumber).NotEmpty();
         RuleFor(e => e.ReferenceNumber)
             .Must(e => int.TryParse(e, out _))
@@ -63,13 +66,23 @@ internal class CreateDisbursementCommandHandler
             validation.Errors.Add(new(nameof(request.PayeeId), ErrorCodes.E_SUPPLIER_NOT_FOUND));
         }
 
+        var payable = await _dbContext.AccountsPayable
+            .Where(ap => ap.VoucherNumber == request.ApVoucherNumber)
+            .SingleOrDefaultAsync(cancellationToken );
+        if (payable == null)
+        {
+            validation.Errors.Add(new(nameof(request.ApVoucherNumber), ErrorCodes.E_VOUCHER_NOT_FOUND));
+        }
+
         if (!validation.IsValid)
         {
             return Result<Payment>.Invalid(validation.AsErrors());
         }
 
         // Map journal lines
+        decimal total = 0.0m;
         List<JournalLine> lines = [];
+
         foreach (var jl in request.Lines)
         {
             CostCenter? costCenter = null;
@@ -92,6 +105,8 @@ internal class CreateDisbursementCommandHandler
                 Credit = jl.Credit,
                 CostCenter = costCenter
             });
+
+            if (jl.Credit.HasValue) total += jl.Credit.Value;
         }
 
         var payment = new Payment
@@ -105,8 +120,9 @@ internal class CreateDisbursementCommandHandler
                 JournalType = (await _dbContext.JournalTypes.FindAsync([DISBURSEMENT_JOURNAL_TYPE_PK], cancellationToken))!,
                 Description = "",
                 Lines = lines
-            },
+            }
         };
+        payable!.Balance = payable.TotalAmount - total;
            
         await _dbContext.Payments.AddAsync(payment, cancellationToken);
         await _dbContext.SaveChangesAsync(cancellationToken);

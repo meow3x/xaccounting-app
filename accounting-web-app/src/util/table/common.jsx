@@ -9,7 +9,8 @@ export function DataTableWrapper({
                                    records,
                                    paginationState,
                                    totalRecords,
-                                   isFetching}) {
+                                   isFetching,
+                                   onRowClick}) {
   // const paginationProps = usePaginationDefaults(PAGE_SIZES);
 
   return (
@@ -21,6 +22,7 @@ export function DataTableWrapper({
       records={records}
       totalRecords={totalRecords}
       fetching={isFetching}
+      onRowClick={onRowClick}
       {...paginationState}
     />
   );
@@ -29,7 +31,7 @@ export function DataTableWrapper({
 export function Peso(value) {
   return (
     <>{typeof(value) === 'number'
-      ? <>&#8369; {value.toFixed(2)} </>
+      ? <>&#8369; {value.toLocaleString(undefined, { minimumFractionDigits: 2 })} </>
       : '-' }
     </>
   )
@@ -42,6 +44,13 @@ export function Percentage(value) {
       : '-' }
     </>
   )
+}
+
+export function FormatAddress(address) {
+  if (!address) return ''
+  return (address.street || '') + ' '
+    + (address.city || '') + ' '
+    + (address.province || '')
 }
 
 export function Opt(value) {
@@ -66,5 +75,4 @@ export function DataTableRowActions({ onEditClick, onDeleteClick, onViewClick })
 
 export function Heading({text})  {
   return <Text size="lg" c="gray.6" fw={400}>{text}</Text>
-
 }

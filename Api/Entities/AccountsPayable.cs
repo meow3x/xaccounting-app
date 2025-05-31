@@ -19,6 +19,9 @@ public class AccountsPayable : BaseEntity
     [Column(TypeName = "date")]
     public DateOnly? DueDate { get; set; }
     public int? Terms { get; set; }
+
+    public decimal TotalAmount { get; set; }
+    public decimal Balance { get; set; }
 }
 
 [JsonConverter(typeof(JsonStringEnumConverter<ChequeStatus>))]

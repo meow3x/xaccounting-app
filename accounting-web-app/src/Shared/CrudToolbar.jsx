@@ -6,9 +6,8 @@ export default function CrudToolbar({title, onCreate, onImport}) {
     <Group justify="left" gap={4} mb={30}>
       <Text size="lg" c="dark.4" fw={600}>{title}</Text>
       <Button
-        size="sm"
         variant="subtle"
-        leftSection={<IconPlus size={14} />}
+        leftSection={<IconPlus size={16} />}
         onClick={onCreate}
       >
         New

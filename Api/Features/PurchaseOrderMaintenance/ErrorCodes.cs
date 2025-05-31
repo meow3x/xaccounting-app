@@ -12,4 +12,5 @@ public static class ErrorCodes
     public static readonly string E_ORDER_NOT_OPEN = "E_PO_008";
     public static readonly string E_COST_CENTER_NOT_FOUND = "E_AP_001";
     public static readonly string E_PAYEE_NOT_FOUND = "E_DB_001";
+    public static readonly string E_VOUCHER_NOT_FOUND = "E_DB_002";
 }

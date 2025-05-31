@@ -8,7 +8,10 @@ import {
   IconBriefcase,
   IconFile3d,
   IconInvoice,
-  IconUser, IconBuilding, IconUsers
+  IconUser, IconBuilding, IconUsers,
+  IconCurrency,
+  IconCurrencyDollar,
+  IconBookFilled
 } from '@tabler/icons-react';
 import { Outlet, NavLink as ReactNavLink } from 'react-router';
 
@@ -18,7 +21,7 @@ export default function AdminAppShell() {
   return (
     <AppShell
       // header={{ height: 50 }}
-      navbar={{ width: 300, breakpoint: 'sm', collapsed: { mobile: !opened } }}
+      navbar={{ width: 250, breakpoint: 'sm', collapsed: { mobile: !opened } }}
       padding="md">
       {/*<AppShell.Header>*/}
       {/*  <Group h="100%" px="md">*/}
@@ -29,12 +32,11 @@ export default function AdminAppShell() {
 
       <title>Administration</title>
 
-      <AppShell.Navbar p="md">
-        <ScrollArea>
+      <AppShell.Navbar p="md" style={ { backgroundColor: 'var(--mantine-color-gray-1)', color: 'var(--mantine-color-dark-3)' }}>
+        <ScrollArea fw={450}>
           <NavLink
             label="Maintenance"
-            leftSection={<IconSettingsCog size={16} />}
-            childrenOffset="sm"
+            // rightSection={<IconSettingsCog size={16} />}
             defaultOpened>
             <NavLink
               // leftSection={<IconBook size={16} />}
@@ -65,8 +67,7 @@ export default function AdminAppShell() {
 
           <NavLink
             label="Vendor & Purchases"
-            leftSection={<IconInvoice size={16} />}
-            childrenOffset="sm"
+            // rightSection={<IconInvoice size={16} />}
             defaultOpened
           >
             <NavLink
@@ -76,9 +77,36 @@ export default function AdminAppShell() {
 
             <NavLink
               component={ReactNavLink}
-              label="PO Payable"
+              label="Receive Purchase Order"
               to="receive-purchase-order" />
           </NavLink>
+
+          <NavLink
+            label="Journal Entries"
+            // leftSection={<IconBook size={16} />}
+            defaultOpened
+          >
+            <NavLink
+              component={ReactNavLink}
+              label="Payable"
+              to="accounts-payable" />
+
+            <NavLink
+              component={ReactNavLink}
+              label="Disbursement"
+              to="disbursements" />
+
+
+            <NavLink
+              component={ReactNavLink}
+              label="General"
+              to="general-journal" />
+          </NavLink>
+
+          <NavLink
+            component={ReactNavLink}
+            label="Inventory"
+            to="inventory" />
         </ScrollArea>
       </AppShell.Navbar>
 
