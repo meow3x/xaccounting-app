@@ -1,0 +1,2 @@
+
+export const QUERY_DEFAULT_STALE_TIME = 300000

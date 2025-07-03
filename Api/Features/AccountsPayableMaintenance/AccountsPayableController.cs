@@ -33,6 +33,38 @@ public class AccountsPayableController : ControllerBase
         return await _dbContext.CostCenters.AsNoTracking().ToListAsync(cancellationToken);
     }
 
+    [HttpGet("GroupBy/Suppliers")]
+    public async Task<IEnumerable<object>> GetPayableBalanceBySupplier()
+    {
+        var query =
+            from ap in _dbContext.AccountsPayable
+            group ap by ap.Supplier into g
+            select new
+            {
+                Supplier = g.Key,
+                PayableBalance = g.Sum(ap => ap.Balance)
+            };
+            
+        return await query.ToListAsync();
+    }
+
+
+    [HttpGet("Balance/Supplier/{supplierId}")]
+    public async Task<ActionResult<object>> GetPayableBalanceBySupplier(int supplierId)
+    {
+        var result = await
+            (from ap in _dbContext.AccountsPayable
+             where ap.Supplier.Id == supplierId
+             group ap by ap.Supplier into g
+             select new
+             {
+                 Supplier = g.Key,
+                 PayableBalance = g.Sum(ap => ap.Balance)
+             }).SingleOrDefaultAsync();
+
+        return result == null ? NotFound() : Ok(result);
+    }
+
     [HttpGet("{voucherNumber}")]
     public async Task<ActionResult<AccountsPayable>> GetByVoucher(int voucherNumber)
     {

@@ -120,7 +120,9 @@ internal class CreateDisbursementCommandHandler
                 JournalType = (await _dbContext.JournalTypes.FindAsync([DISBURSEMENT_JOURNAL_TYPE_PK], cancellationToken))!,
                 Description = "",
                 Lines = lines
-            }
+            },
+            ApvNumber = request.ApVoucherNumber,
+            TotalAmount = total
         };
         payable!.Balance = payable.TotalAmount - total;
            

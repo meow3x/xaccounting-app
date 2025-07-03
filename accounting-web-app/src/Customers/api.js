@@ -1,6 +1,8 @@
 import {useEffect, useState} from "react";
 import axios from "axios";
 import {getUnitOfMeasurements} from "src/Items/api.js";
+import { useQuery } from "@tanstack/react-query";
+import { QUERY_DEFAULT_STALE_TIME } from "src/defs";
 
 // export const restFactory = createRestFactory({endpoint: '/api/Customers'});
 
@@ -51,4 +53,15 @@ export function usePaymentTerms() {
     getPaymentTerms().then(setPaymentTerms);
   }, [])
   return paymentTerms;
+}
+
+export function useGetCustomers() {
+  return useQuery({
+    queryKey: [ 'customers' ],
+    queryFn: async () => {
+      const result = await axios.get('/api/Customers')
+      return result.data
+    },
+    staleTime: QUERY_DEFAULT_STALE_TIME
+  })
 }

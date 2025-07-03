@@ -48,7 +48,12 @@ export function makeDisbursementForm() {
 export default function DisbursementForm({apVoucherNumber, onClose}) {
   const form = useForm(makeDisbursementForm())
   const { data: suppliers } = useGetSuppliers()
-  const { data: accounts } = useGetAccounts()
+  const { data: accounts } = useGetAccounts({
+    pagination: {
+      page: 1,
+      pageSize: 999999 // load all accounts
+    },
+  })
   const [journalLines, setJournalLines] = useState([])
   const { data: payable, isFetching } = useGetPayable(apVoucherNumber)
   const { data: vouchers } = useGetVouchers()
@@ -70,7 +75,6 @@ export default function DisbursementForm({apVoucherNumber, onClose}) {
         // debit journal line is already pre-populated.
         credit: debits.reduce((a, c) => a + c, 0)
       }
-
 
       const lines = credits.map(e => ({
         account: { ...e.account },
@@ -115,6 +119,8 @@ export default function DisbursementForm({apVoucherNumber, onClose}) {
 
         queryClient.invalidateQueries({ queryKey: ['disbursements']})
         queryClient.invalidateQueries({queryKey: ['accounts-payable']})
+        queryClient.invalidateQueries({queryKey: ['payable-balance'] })
+
         onClose?.()
       }
     })
@@ -183,7 +189,6 @@ export default function DisbursementForm({apVoucherNumber, onClose}) {
           />
 
           <Checkbox
-            required
             defaultChecked
             label="Cheque Payment"
             key={form.key('isCheque')}
@@ -247,13 +252,12 @@ export default function DisbursementForm({apVoucherNumber, onClose}) {
               Add
             </Button>
           </Group>
-
         </Stack>
 
         {/* journal view */}
         <Stack flex={3}>
           <Notification withBorder withCloseButton={false} color="orange.4">
-            Please select correct cash / check account
+            Please select account to credit (Cash/Check)
           </Notification>
 
           <JournalEntryTable lines={journalLines} withCostCenter={false} onRowDelete={handleRowDelete}/>

@@ -6,11 +6,12 @@ using FluentValidation;
 using FluentValidation.Results;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using NodaTime.Extensions;
 using System.Collections.Immutable;
 
 namespace Api.Features.PurchaseOrderMaintenance.Command;
 
-public record PurchaseOrderLineItem(
+public record PurchaseOrderLineItemReq(
     int ItemId,
     int Quantity,
     decimal Discount // In amount, not percentage
@@ -23,7 +24,7 @@ public record CreatePurchaseOrderCommand(
     DateOnly DeliveryDate,
     int ProjectId,
     string Description,
-    List<PurchaseOrderLineItem> LineItems,
+    List<PurchaseOrderLineItemReq> LineItems,
     int DebitTo,
     int CreditTo
 ) : IRequest<Result<PurchaseOrder>>;
@@ -54,14 +55,14 @@ public class PurchaseOrderCommandValidator : AbstractValidator<CreatePurchaseOrd
             .WithMessage("Line items must be unique. Combine similar items in a single line");
     }
 
-    private static bool DistinctElements(List<PurchaseOrderLineItem> items)
+    private static bool DistinctElements(List<PurchaseOrderLineItemReq> items)
     {
         var ids = items.Select(e => e.ItemId).ToList();
         return new HashSet<int>(ids).Count == ids.Count;
     }
 }
 
-public class PurchaseOrderLineItemValidator : AbstractValidator<PurchaseOrderLineItem>
+public class PurchaseOrderLineItemValidator : AbstractValidator<PurchaseOrderLineItemReq>
 {
     public PurchaseOrderLineItemValidator()
     {
@@ -147,7 +148,7 @@ internal sealed class CreatePurchaseOrderCommandHandler
         // TODO: Check for zero cost items
 
         var lineItems = request.LineItems
-            .Select(requestLine => LineItem.FromItem(
+            .Select(requestLine => PurchaseOrderLineItem.FromItem(
                 requestLine.Quantity,
                 requestLine.Discount,
                 items.Single(e => e.Id == requestLine.ItemId)))
@@ -163,8 +164,7 @@ internal sealed class CreatePurchaseOrderCommandHandler
             Description = request.Description,
             Project = project!,
             Supplier = supplier!,
-            DeliveryDate = request.DeliveryDate,
-            CreatedAtDate = DateOnly.FromDateTime(DateTime.Now),
+            DeliveryDate = request.DeliveryDate.ToLocalDate(),
             LineItems = lineItems,
             VatableAmount = vatableAmount,
             VatAmount = vatAmount,

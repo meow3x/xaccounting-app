@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using NodaTime;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
@@ -17,7 +18,7 @@ public class AccountsPayable : BaseEntity
     public required JournalEntry JournalEntry { get; set; }
 
     [Column(TypeName = "date")]
-    public DateOnly? DueDate { get; set; }
+    public LocalDate? DueDate { get; set; }
     public int? Terms { get; set; }
 
     public decimal TotalAmount { get; set; }
@@ -40,7 +41,11 @@ public class Payment : BaseEntity
     public required string ReferenceNumber { get; set; } // Check number / etc..
     public required Supplier Payee { get; set; }
 
+    public int? ApvNumber { get; set; } // A/P voucher number
+
     public bool IsCheque { get; set; }
     //public int? CheckNumber { get; set; }
     public ChequeStatus? ChequeStatus { get; set; }
+
+    public decimal TotalAmount { get; set; }
 }

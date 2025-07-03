@@ -1,5 +1,5 @@
 import { DataTableWrapper, Heading, Peso } from "src/util/table/common";
-import { useGetAccountsPayable } from "./api";
+import { useGetAccountsPayable, useGetPayableBalance } from "./api";
 import { usePaginationState } from "src/util/table/pagination";
 import { Box, Button, Code, Container, Divider, em, Group, Modal, NumberInput, Paper, Stack, Text, TextInput } from "@mantine/core";
 import { useState } from "react";
@@ -13,7 +13,6 @@ export function AccountsPayableList({onPaymentRequest}) {
   const { data, isFetching } = useGetAccountsPayable()
   const paginationState = usePaginationState([10, 20, 50, 100])
   const [selectedRow, setSelectedRow] = useState(null)
-  const navigate = useNavigate()
 
   const colums = [
     {
@@ -46,9 +45,7 @@ export function AccountsPayableList({onPaymentRequest}) {
     {
       accessor: 'amount',
       title: 'Amount',
-      render: (row) => {
-        return Peso(row.totalAmount)
-      }
+      render: (row) =>  Peso(row.totalAmount)
     },
     {
       accessor: 'paid',
@@ -88,6 +85,7 @@ export function AccountsPayableList({onPaymentRequest}) {
 
 export function PayableDetails({ap, onPaymentRequest}) {
   // const totalDebit = ap.journalEntry.lines.map(e => e.debit).reduce((a, c) => a + c, 0)
+  const { data: payableBalance, isFetching } = useGetPayableBalance(ap.supplier.id)
 
   return (
     <Paper shadow="md" withBorder>
@@ -134,10 +132,10 @@ export function PayableDetails({ap, onPaymentRequest}) {
         </Stack>
 
         <Stack flex={3}>
-          <Group >
-            <Paper shadow="lg" p={10} bg="dark.2" c="white" radius="md">
-              <Text size="sm" mb="md">Payable Balance</Text>
-              <Text fw={500} size="xl">{Peso(ap.balance)}</Text>
+          <Group>
+            <Paper shadow="lg" p={10} bg="dark.3" c="white" radius="md">
+              <Text fw={500} size="xl">{Peso(payableBalance?.payableBalance)}</Text>
+              <Text size="sm" mt="lg">Payable Balance - {payableBalance?.supplier?.name}</Text>
             </Paper>
           </Group>
 
@@ -152,7 +150,7 @@ export function PayableDetails({ap, onPaymentRequest}) {
 
           </Box> */}
         </Stack>
-        </Group>
+      </Group>
 
       <Group justify="right" m="md">
         <Button disabled={ap.balance == 0.0} variant="outline" color="dark" >Print Voucher</Button>

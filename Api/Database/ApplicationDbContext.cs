@@ -1,6 +1,7 @@
 ﻿
 using Api.Entities;
 using Microsoft.EntityFrameworkCore;
+using NodaTime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,7 +25,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<Employee> Employees { get; set; }
     public DbSet<Project> Projects { get; set; }
     public DbSet<PurchaseOrder> PurchaseOrders { get; set; }
-    public DbSet<LineItem> LineItems { get; set; }
+    public DbSet<PurchaseOrderLineItem> PurchaseOrderLineItems { get; set; }
     public DbSet<JournalType> JournalTypes { get; set; }
     public DbSet<JournalEntry> JournalEntries { get; set; }
     public DbSet<JournalLine> JournalLines { get; set; }
@@ -33,10 +34,17 @@ public class ApplicationDbContext : DbContext
     public DbSet<CostCenter> CostCenters { get; set; }
     public DbSet<AccountsPayable> AccountsPayable { get; set; }
     public DbSet<Payment> Payments { get; set; }
+    public DbSet<Invoice> Invoices { get; set; }
+    public DbSet<InvoiceLineItem> InvoiceLineItems { get; set; }
+
+    // Views
+    public DbSet<VW_ItemEndingCost> EndingCostView { get; set; }
+    public DbSet<VW_AccountsReceivable> AccountsReceivable { get; set; }
+    public DbSet<VW_AccountsPayable> AccountsPayableView { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        var epoch = new DateTime(year: 2025, month: 1, day: 1, hour: 0, minute: 0, second: 0, kind: DateTimeKind.Utc);
+        Instant epoch = Instant.FromUnixTimeSeconds(1735689600); // 01/01/2025
 
         //var epoch = U ;
             
@@ -60,6 +68,11 @@ public class ApplicationDbContext : DbContext
         
         modelBuilder.Entity<PurchaseOrder>()
             .Property(po => po.Number)
+            .UseIdentityAlwaysColumn()
+            .HasIdentityOptions(startValue: 1000);
+
+        modelBuilder.Entity<Invoice>()
+            .Property(i => i.Number)
             .UseIdentityAlwaysColumn()
             .HasIdentityOptions(startValue: 1000);
 
@@ -161,6 +174,24 @@ public class ApplicationDbContext : DbContext
                 new CostCenter { Id = 1, Name = "Default Cost Center", CreatedAt = epoch,  UpdatedAt = epoch }
             );
 
+        modelBuilder.Entity<Customer>()
+            .HasData(
+                // Sales
+                new Customer
+                {
+                    Id = 1,
+                    CustomerId = "4000100",
+                    Name = "Cash",
+                    Address = null!,
+                    CreatedAt = epoch,
+                    UpdatedAt = epoch
+                    //Address = new Address(null, null, null, null, null)
+                }
+            );
+        modelBuilder.Entity<Customer>().OwnsOne(c => c.Address).HasData(
+            new { CustomerId = 1, Street = string.Empty, City = string.Empty, Province = string.Empty, LandlineNumber = string.Empty, MobileNumber = string.Empty }
+        );
+
         modelBuilder.Entity<AccountsPayable>()
             .Property(po => po.VoucherNumber)
             .UseIdentityAlwaysColumn()
@@ -170,5 +201,22 @@ public class ApplicationDbContext : DbContext
             .Property(d => d.VoucherNumber)
             .UseIdentityAlwaysColumn()
             .HasIdentityOptions(startValue: 10_000);
+
+        modelBuilder.Entity<CollectionPayment>()
+            .Property(c => c.ReceiptNumber)
+            .UseIdentityAlwaysColumn()
+            .HasIdentityOptions(startValue: 10_100);
+
+        modelBuilder.Entity<VW_ItemEndingCost>() 
+            .HasNoKey()
+            .ToView("view_endinginventorycost");
+
+        modelBuilder.Entity<VW_AccountsReceivable>()
+            .HasNoKey()
+            .ToView("view_accounts_receivable");
+
+        modelBuilder.Entity<VW_AccountsPayable>()
+            .HasNoKey()
+            .ToView("view_accounts_payable");
     }
 }

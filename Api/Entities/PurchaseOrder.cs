@@ -1,32 +1,47 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using NodaTime;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace Api.Entities;
 
-[Owned]
-public class ItemSnapshot
+[Index(nameof(Number), IsUnique = true)]
+public class PurchaseOrder : BaseEntity
 {
-    [MaxLength(25)]
-    public required string Code { get; set; }
+    public int Number { get; set; } // Auto generatedd
 
-    [MaxLength(512)]
-    public required string Name { get; set; }
-    public required int UnitOfMeasurementId { get; set; }
-    public required string UnitOfMeasurement { get; set; }
-    //public decimal UnitPrice { get; set; }
-    public decimal UnitCost { get; set; }
-    //public decimal Discount { get; set; }
-    //public decimal Total { get; set; }
+    [MaxLength(255)]
+    public string? RRNumber { get; set; }
+    [MaxLength(255)]
+    public required string RequisitionNumber { get; set; }
+    public required LocalDate DeliveryDate { get; set; }
+    public required Project Project { get; set; }
+    public required string Description { get; set; }
+    public required Supplier Supplier { get; set; }
+    public ICollection<PurchaseOrderLineItem> LineItems { get; set; } = [];
+    public decimal VatableAmount { get; set; }
+    public decimal VatAmount { get; set; }
+    public decimal Discounted { get; set; }
+    public decimal NetAmount { get; set; } // FIXME: Gross - Discounted
+
+    public OrderStatus Status { get; set; } = OrderStatus.Open;
+
+    [Column(TypeName = "timestamp with time zone")]
+    public Instant? ClosedAt { get; set; } = null;
+
+    // FIXME: This shouldn't be here
+    public int DebitTo { get; set; }
+    public int CreditTo { get; set; } // Is this even used
+    //public required JournalType JournalType { get; set; }
 }
 
 // Immutable
-public class LineItem : BaseEntity
+public class PurchaseOrderLineItem : BaseEntity
 {
-    public static LineItem FromItem(int quantity, decimal discount, Item item)
+    public static PurchaseOrderLineItem FromItem(int quantity, decimal discount, Item item)
     {
-        return new LineItem
+        return new PurchaseOrderLineItem
         {
             OriginalItem = item,
             ItemSnapshot = new ItemSnapshot
@@ -51,14 +66,6 @@ public class LineItem : BaseEntity
     public int Quantity { get; set; }
     public decimal Discount { get; set; }
     public decimal LineTotal { get; set; }
-
-}
-
-[Index(nameof(Number), IsUnique = true)]
-public class Project : BaseEntity
-{
-    public required string Number { get; set; }
-    public required string Name { get; set; }
 }
 
 [JsonConverter(typeof(JsonStringEnumConverter<OrderStatus>))]
@@ -66,35 +73,4 @@ public enum OrderStatus : byte
 {
     Closed = 0,
     Open = 1
-}
-
-[Index(nameof(Number), IsUnique = true)]
-public class PurchaseOrder : BaseEntity
-{
-    public int Number { get; set; } // Auto generatedd
-
-    [MaxLength(255)]
-    public string? RRNumber { get; set; }
-    [MaxLength(255)]
-    public required string RequisitionNumber { get; set; }
-    public required DateOnly CreatedAtDate { get; set; } // Should we just use Created at instead
-    public required DateOnly DeliveryDate { get; set; }
-    public required Project Project { get; set; }
-    public required string Description { get; set; }
-    public required Supplier Supplier { get; set; }
-    public ICollection<LineItem> LineItems { get; set; } = [];
-    public decimal VatableAmount { get; set; }
-    public decimal VatAmount { get; set; }
-    public decimal Discounted { get; set; }
-    public decimal NetAmount { get; set; } // FIXME: Gross - Discounted
-
-    public OrderStatus Status { get; set; } = OrderStatus.Open;
-
-    [Column(TypeName = "timestamp without time zone")]
-    public DateTime? ClosedAt { get; set; } = null;
-
-    // FIXME: This shouldn't be here
-    public int DebitTo { get; set; }
-    public int CreditTo { get; set; } // Is this even used
-    //public required JournalType JournalType { get; set; }
 }

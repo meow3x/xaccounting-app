@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import {PAGE_SIZES} from "src/util/table/common.jsx";
 
-export function usePaginationState(pageSizes) {
+export function usePaginationState(pageSizes, sizeIndex = 0) {
   const [pageSize, setPageSize] = useState(pageSizes[0]);
   const [page, setPage] = useState(1);
 

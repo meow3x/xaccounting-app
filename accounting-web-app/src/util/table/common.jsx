@@ -10,7 +10,8 @@ export function DataTableWrapper({
                                    paginationState,
                                    totalRecords,
                                    isFetching,
-                                   onRowClick}) {
+                                   onRowClick,
+                                   idAccessor}) {
   // const paginationProps = usePaginationDefaults(PAGE_SIZES);
 
   return (
@@ -24,6 +25,7 @@ export function DataTableWrapper({
       fetching={isFetching}
       onRowClick={onRowClick}
       {...paginationState}
+      idAccessor={idAccessor}
     />
   );
 }

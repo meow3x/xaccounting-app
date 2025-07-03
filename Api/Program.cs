@@ -2,6 +2,8 @@ using Api.Database;
 using Api.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using NodaTime;
+using NodaTime.Serialization.SystemTextJson;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,17 +27,20 @@ builder.Services.AddCors(options =>
     //    builder.WithExposedHeaders("X-Pagination-*");
     //});
 });
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(opts =>
+{
+    opts.JsonSerializerOptions.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
+});
 builder.Services.AddOpenApi();
 builder.Services.AddDbContextPool<ApplicationDbContext>(opt =>
 {
-    opt.UseNpgsql(builder.Configuration.GetConnectionString("ApplicationContext"))
+    opt.UseNpgsql(builder.Configuration.GetConnectionString("ApplicationContext"), o => o.UseNodaTime())
         .UseLowerCaseNamingConvention();
     opt.EnableSensitiveDataLogging();
+    
        
 });
 builder.Services.AddMediatR(config => config.RegisterServicesFromAssembly(typeof(Program).Assembly));
-
 var app = builder.Build();
 
 app.UseCors();

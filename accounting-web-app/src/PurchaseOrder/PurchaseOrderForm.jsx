@@ -5,6 +5,7 @@ import {
   Fieldset,
   Group,
   NumberInput,
+  Paper,
   Select,
   Stack,
   Table, Text,
@@ -21,6 +22,7 @@ import {useCreatePurchaseOrder, useGetProjects} from "src/PurchaseOrder/api.js";
 import {IconEqual, IconMinus, IconTrash, IconX} from "@tabler/icons-react";
 import {Heading, Peso} from "src/util/table/common.jsx";
 import {showSuccessNotification} from "src/util/notification/notifications.js";
+import { ItemSelectorApplet } from "../Items/ItemSelectorApplet";
 
 export function makePurchaseOrderForm() {
   return {
@@ -67,8 +69,6 @@ export default function PurchaseOrderForm() {
   })
 
   function handleItemAdded(item) {
-    //
-    // setValues
     const merged = [
       ...form.getValues().lineItems,
       ...[{
@@ -319,115 +319,12 @@ export default function PurchaseOrderForm() {
   )
 }
 
-export function ItemSelectorApplet({ itemList, onItemAdded }) {
-  const [queuedItem, setQueuedItem] = useState(null)
-
-  const [itemId, setItemId] = useState('')
-  const [quantity, setQuantity] = useState(null)
-  const [items, setItems] = useState([])
-  const selectedItem = itemList?.find(e => e.id === parseInt(itemId))
-
-  function handleAdd() {
-    if (! (itemId && quantity)) {
-      return
-    }
-
-    const newItem = {
-      id: itemId,
-      code: selectedItem.code,
-      quantity: quantity,
-      uom: selectedItem.uom.name,
-      description: selectedItem.name,
-      unitPrice: selectedItem.unitCost,
-      discount: 0,
-      lineTotal: selectedItem.unitCost * quantity,
-    }
-
-    onItemAdded?.({
-      id: itemId,
-      quantity: quantity,
-      lineTotal: selectedItem.unitCost * quantity
-    })
-
-    console.log(newItem)
-    setItems([
-      ... items,
-      newItem
-    ])
-  }
-
-  return (
-    <>
-      <Group mb={15}>
-        <Select
-          required
-          size="sm"
-          label="Item"
-          placeholder="Select item"
-          searchable
-          checkIconPosition="right"
-          data={itemList?.map(e => ({
-            value: e.id.toString(),
-            label: `${e.code} - ${e.name} [PHP ${e.unitCost}]`
-          }))}
-          style={{width: 400}}
-          value={itemId}
-          onChange={setItemId}
-        />
-
-        <NumberInput
-          required
-          label="Quantity"
-          style={{width: 150}}
-          value={quantity}
-          onChange={setQuantity}
-          min={1}
-        />
-
-        <TextInput
-          label="UoM"
-          readOnly
-          variant="filled"
-          value={selectedItem?.uom.name}
-          style={{width: 150}}/>
-
-        <NumberInput
-          label="Unit Price"
-          readOnly
-          variant="filled"
-          value={selectedItem?.unitCost}
-          thousandSeparator=","
-        />
-
-        <NumberInput
-          label="Discount"
-          />
-
-        <NumberInput
-          label="Total"
-          readOnly
-          variant="filled"
-          thousandSeparator=","
-          value={(selectedItem?.unitCost ?? 0) * (quantity ?? 0)}/>
-
-        <Button onClick={handleAdd} variant="filled" color="lime">Add</Button>
-      </Group>
-
-      <Group grow mb={20}>
-        <LineItemsList lineItems={items} />
-      </Group>
-    </>
-  )
-}
-
-export function LineItemsList({lineItems}) {
+export function LineItemsList({lineItems, isSelling}) {
   const body = lineItems.map(item =>
     <Table.Tr key={item.id}>
-      <Table.Td>{item.code}</Table.Td>
-      <Table.Td>{item.quantity}</Table.Td>
-      <Table.Td>{item.uom}</Table.Td>
-      <Table.Td>{item.description}</Table.Td>
-      <Table.Td>{Peso(item.unitPrice)}</Table.Td>
+      <Table.Td>{item.code} - {item.description}</Table.Td>
+      <Table.Td>{item.quantity} {item.uom}</Table.Td>
+      <Table.Td>{Peso(item.price)}</Table.Td>
       <Table.Td>{Peso(item.discount)}</Table.Td>
       <Table.Td>{Peso(item.lineTotal)}</Table.Td>
       <Table.Td>
@@ -438,14 +335,12 @@ export function LineItemsList({lineItems}) {
     </Table.Tr>
   )
   return (
-    <Table mt="md" captionSide="bottom" striped highlightOnHover stripedColor="">
+    <Table mt="md" highlightOnHover withColumnBorders>
       <Table.Thead>
         <Table.Tr>
-          <Table.Th>Item Code</Table.Th>
+          <Table.Th>Item </Table.Th>
           <Table.Th>Quantity</Table.Th>
-          <Table.Th>Unit</Table.Th>
-          <Table.Th>Description</Table.Th>
-          <Table.Th>Unit Price</Table.Th>
+          <Table.Th>{isSelling ? 'Unit Price' : 'Unit Cost'}</Table.Th>
           <Table.Th>Discount</Table.Th>
           <Table.Th>Total Price</Table.Th>
           <Table.Th>Controls</Table.Th>

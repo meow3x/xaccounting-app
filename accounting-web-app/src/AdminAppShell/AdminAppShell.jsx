@@ -107,6 +107,38 @@ export default function AdminAppShell() {
             component={ReactNavLink}
             label="Inventory"
             to="inventory" />
+
+          <NavLink
+            label="Sales"
+            defaultOpened>
+              <NavLink
+                component={ReactNavLink}
+                label="Invoice - Trade"
+                to="invoice" />
+
+              <NavLink
+                component={ReactNavLink}
+                label="Collection"
+                to="collection" />
+          </NavLink>
+
+          <NavLink
+            label="Reports"
+            defaultOpened
+          >
+            <NavLink
+              component={ReactNavLink}
+              label="Receivable Subsidiary (By Total)"
+              to="report-ar"
+            />
+
+            <NavLink
+              component={ReactNavLink}
+              label="Payable Subsidiary (By Total)"
+              to="report-ap"
+            />
+
+            </NavLink>
         </ScrollArea>
       </AppShell.Navbar>
 

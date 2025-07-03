@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using NodaTime;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -23,16 +24,26 @@ public class InventoryLog
     public required Inventory Inventory { get; set; }
 
     // Linked line item from purchase order
-    public LineItem? LineItem { get; set; }
+    public PurchaseOrderLineItem? LineItem { get; set; }
 
-    [Column(TypeName = "timestamp without time zone")]
-    public DateTime CreatedAt { get; set; } = DateTime.Now;
+    // TODO: linked line item from sales
 
-    [Column(TypeName = "date")]
-    public DateOnly Date { get; set; } = DateOnly.FromDateTime(DateTime.Now);
+    [Column(TypeName = "timestamp with time zone")]
+    public Instant Timestamp { get; set; } = SystemClock.Instance.GetCurrentInstant();
+
     public int StockBefore { get; set; }
 
     // Negative or positive
     public int Quantity { get; set; }
     public int StockAfter { get; set; }
+}
+
+// View
+public class VW_ItemEndingCost
+{
+    public required string ItemCode { get; set; }
+    public required string ItemName { get; set; }
+    public decimal? Purchase { get; set; }
+    public decimal? Sold { get; set; }
+    public decimal? EndCost { get; set; }
 }

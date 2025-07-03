@@ -6,6 +6,7 @@ using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
+using NodaTime;
 using System.Text.Json.Serialization;
 using System.Threading;
 
@@ -55,14 +56,13 @@ internal sealed class ReceivePurchaseOrderCommandHandler
         ArgumentNullException.ThrowIfNull(purchaseJournal, nameof(purchaseJournal));
         
         // One journal entry line per item
-        var debitLines = po!.LineItems
-            .Select(lineItem => new JournalLine
-            {
-                Description = lineItem.ItemSnapshot.Name,
-                Account = debitAccount!,
-                Debit = lineItem.LineTotal,
-                ReferenceNumber1 = po.Number.ToString()
-            });
+        var debitLines = po!.LineItems.Select(lineItem => new JournalLine
+        {
+            Description = lineItem.ItemSnapshot.Name,
+            Account = debitAccount!,
+            Debit = lineItem.LineTotal,
+            ReferenceNumber1 = po.Number.ToString()
+        });
         var creditLine = new JournalLine
         {
             Description = "Purchased Merchandise on Account",
@@ -86,7 +86,7 @@ internal sealed class ReceivePurchaseOrderCommandHandler
         po.DebitTo = request.DebitTo;
         po.CreditTo = request.CreditTo;
         po.Status = OrderStatus.Closed;
-        po.ClosedAt = DateTime.Now;
+        po.ClosedAt = SystemClock.Instance.GetCurrentInstant();
 
         // Increase stock
         // TODO: Move this to dedicated mediator

@@ -9,3 +9,13 @@ export function showSuccessNotification(message) {
     withBorder: true
   })
 }
+
+export function showError(message) {
+  notifications.show({
+    title: 'Error',
+    message,
+    position: 'bottom-right',
+    color: 'red',
+    withBorder: true
+  })
+}

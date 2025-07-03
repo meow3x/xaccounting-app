@@ -45,3 +45,17 @@ export function useGetPayable(voucherNumber) {
     staleTime: 300000
   })
 }
+
+export function useGetPayableBalance(supplierId) {
+  return useQuery({
+    queryKey: ['payable-balance', supplierId],
+    queryFn: async() => {
+      if (supplierId) {
+        const result = await axios.get(`/api/AccountsPayable/Balance/Supplier/${supplierId}`)
+        return result.data
+      }
+
+      return null
+    }
+  })
+}

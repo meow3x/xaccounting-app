@@ -95,6 +95,7 @@ export default function AccountsPayableForm({onClose}) {
         setJournalLines([])
         setSelectedSupplier(null)
 
+        queryClient.invalidateQueries({queryKey: ['payable-balance'] })
         queryClient.invalidateQueries({ queryKey: [ 'accounts-payable' ]})
         onClose?.()
       }
@@ -341,12 +342,13 @@ export function JournalEntryTable({lines, withCostCenter = true, onRowDelete}) {
   )
 }
 
-export function JournalEntrySimple({lines}) {
+export function JournalEntrySimple({lines, label = "Journal Entry"}) {
   const totalDebit = lines.map(e => e.debit).reduce((a, c) => a + c, 0)
   const totalCredit = lines.map(e => e.credit).reduce((a, c) => a + c, 0)
 
   return (
     <>
+      {label ? <Text fw={500} c="dark.5" mb="sm">{label}</Text> : null}
       <Table highlightOnHover withColumnBorders>
         <Table.Thead>
           <Table.Tr>
@@ -362,7 +364,7 @@ export function JournalEntrySimple({lines}) {
           {lines.map((e, i) =>
             <Table.Tr key={i}>
               <Table.Td>{e.description}</Table.Td>
-              <Table.Td>{e.costCenter.name}</Table.Td>
+              <Table.Td>{e.costCenter?.name}</Table.Td>
               <Table.Td>{e.account.accountId}</Table.Td>
               <Table.Td>{e.account.name}
                 &nbsp; <Text component="small" size="sm" fs="italic" c="dimmed">({e.account.accountType?.name ?? 'unknown'})</Text>

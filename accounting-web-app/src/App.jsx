@@ -12,6 +12,11 @@ import PurchaseOrderIndex from "src/PurchaseOrder/PurchaseOrderIndex.jsx";
 import ReceivePurchaseOrder from "src/PurchaseOrder/ReceivePurchaseOrder.jsx";
 import AccountsPayableIndex from "./AccountsPayable/AccountsPayableIndex";
 import DisbursementIndex from "./Disbursements/DisbursementIndex";
+import InventoryIndex from "./Inventory/InventoryIndex";
+import InvoiceIndex from "./Invoice/InvoiceIndex";
+import CollectionIndex from "./Collection/CollectionIndex";
+import ReceivableSubledgerIndex from "./Reports/ReceivableSubledgerIndex";
+import PayableSubledgerIndex from "./Reports/PayableSubledgerIndex";
 
 const theme = createTheme({
   fontFamily: 'Roboto Condensed, sans-serif'
@@ -37,6 +42,11 @@ export default function App() {
               <Route path="receive-purchase-order" element={<ReceivePurchaseOrder />} />
               <Route path="accounts-payable" element={<AccountsPayableIndex />} />
               <Route path="disbursements" element={<DisbursementIndex />} />
+              <Route path="inventory" element={<InventoryIndex />} />
+              <Route path="invoice" element={<InvoiceIndex />} />
+              <Route path="collection" element={<CollectionIndex />} />
+              <Route path="report-ar" element={<ReceivableSubledgerIndex />} />
+              <Route path="report-ap" element={<PayableSubledgerIndex />} />
             </Route>
           </Routes>
         </BrowserRouter>

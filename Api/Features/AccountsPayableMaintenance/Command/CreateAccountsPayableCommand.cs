@@ -6,6 +6,7 @@ using Ardalis.Result;
 using Ardalis.Result.FluentValidation;
 using FluentValidation;
 using MediatR;
+using NodaTime.Extensions;
 using System.Text.Json.Serialization;
 
 namespace Api.Features.AccountsPayableMaintenance.Command;
@@ -99,7 +100,7 @@ public class CreateAccountsPayableCommandHandler
         {
             Supplier = supplier!,
             ReferenceNumber = request.ReferenceNumber,
-            DueDate = request.DueDate,
+            DueDate = request.DueDate.HasValue ? request.DueDate.Value.ToLocalDate() : null,
             JournalEntry = new JournalEntry
             {
                 JournalType = (await _dbContext.JournalTypes.FindAsync([PAYABLES_JOURNAL_PK], cancellationToken))!,
